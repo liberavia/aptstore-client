@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        const Http = new XMLHttpRequest();
+        const url='http://localhost:8000/api/';
+        Http.open("GET", url);
+        Http.send();
+
+        Http.onreadystatechange = (e) => {
+            outputDiv = document.getElementById('raw_data')
+            outputDiv.innerHTML = Http.responseText
+        }
+    </script>
+</head>
+<body>
+    <h1>There we go</h1>
+    <div id="raw_data"></div>
+</body>
+</html>
