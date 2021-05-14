@@ -97,3 +97,14 @@ a.article-title:hover {
     background-color: #9012a3;
     border-color: #9012a3;
 }
+
+.card img {
+    max-height: 180px;
+    width: auto !important;
+    height: auto;
+    max-width: 265px;
+}
+
+.bg-image {
+    text-align: center;
+}
