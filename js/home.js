@@ -6,16 +6,14 @@ Http.send();
 Http.onreadystatechange = (e) => {
     if(Http.readyState === XMLHttpRequest.DONE) {
         MainPageData = JSON.parse(Http.responseText);
-        console.log(MainPageData)
+
         Featured = MainPageData.featured
-        console.log(Featured)
         Object.entries(Featured).forEach(([ident, app]) => {
             console.log(ident + ' - ' + app);
             var card = document.querySelector('#appcard');
             var card_title = card.content.querySelector('h5');
             var card_desc = card.content.querySelector('p');
             var card_image = card.content.querySelector('img');
-            console.log('App name: ' +  app.name)
             card_title.textContent = app.name;
             card_desc.textContent = app.description;
             card_image.src = app.images.banner;
@@ -23,6 +21,18 @@ Http.onreadystatechange = (e) => {
             var appcards = document.getElementById('appcards');
             var clone = document.importNode(card.content, true);
             appcards.appendChild(clone);
+        })
+
+        Teaser = MainPageData.teaser
+        Object.entries(Teaser).forEach(([ident, app]) => {
+            console.log(ident + ' - ' + app);
+            var slide = document.querySelector('#carousel-slide');
+            var slide_image = slide.content.querySelector('img');
+            slide_image.src = app.images.banner;
+
+            var carousel_slides = document.getElementById('carousel-slides');
+            var clone = document.importNode(slide.content, true);
+            carousel_slides.appendChild(clone);
         })
     }
 }
