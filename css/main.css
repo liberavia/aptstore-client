@@ -108,3 +108,8 @@ a.article-title:hover {
 .bg-image {
     text-align: center;
 }
+
+.carousel-item {
+    max-height: 290px;
+    width: auto;
+}
