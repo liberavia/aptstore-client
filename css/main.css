@@ -110,6 +110,6 @@ a.article-title:hover {
 }
 
 .carousel-item {
-    max-height: 290px;
+    height: 290px;
     width: auto;
 }

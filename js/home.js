@@ -27,20 +27,22 @@ Http.onreadystatechange = (e) => {
         var counter=0;
         Object.entries(Teaser).forEach(([ident, app]) => {
             console.log(ident + ' - ' + app);
-            var slide = document.querySelector('#carousel-slide');
-            var slide_image = slide.content.querySelector('img');
-            var slide_div = slide.content.querySelector('div');
+            var slides = document.querySelectorAll('.carousel-item');
+            console.log(slides)
+            var slide = slides[counter]
+            console.log(slide)
+            var slide_image = slide.querySelector('img');
+            console.log(slide_image)
+            var slide_caption = slide.querySelector('h5');
+            console.log(slide_caption)
 
             slide_image.src = app.images.banner;
+            slide_caption.textContent = app.name;
             if (counter == 0) {
-                slide_div.setAttribute('class', 'carousel-item active');
+                slide.setAttribute('class', 'carousel-item active');
             } else {
-                slide_div.setAttribute('class', 'carousel-item');
+                slide.setAttribute('class', 'carousel-item');
             }
-
-            var carousel_slides = document.getElementById('carousel-slides');
-            var clone = document.importNode(slide.content, true);
-            carousel_slides.appendChild(clone);
             counter++;
         })
     }
