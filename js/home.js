@@ -45,5 +45,6 @@ Http.onreadystatechange = (e) => {
             }
             counter++;
         })
+        $('#carouselTeaser').carousel();
     }
 }
