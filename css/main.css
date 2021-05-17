@@ -137,3 +137,27 @@ a.article-title:hover {
 a {
     text-decoration: none;
 }
+
+@-webkit-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+.fadeIn2 {
+    animation: fadein 2s;
+    -webkit-animation: fadein 2s;
+}
+
+.fadeIn3 {
+    animation: fadein 3s;
+    -webkit-animation: fadein 3s;
+}
+
+.fadeIn4 {
+    animation: fadein 4s;
+    -webkit-animation: fadein 4s;
+}

@@ -14,6 +14,9 @@ Http.onreadystatechange = (e) => {
             var card_title = card.content.querySelector('h5');
             var card_desc = card.content.querySelector('p');
             var card_image = card.content.querySelector('img');
+            var card_urls = card.content.querySelectorAll('a');
+            card_urls[0].href = "index.html?page=details&ident=" + ident;
+            card_urls[1].href = "index.html?page=details&ident=" + ident;
             card_title.textContent = app.name;
             card_desc.textContent = app.description;
             card_image.src = app.images.banner;
@@ -48,3 +51,5 @@ Http.onreadystatechange = (e) => {
         $('#carouselTeaser').carousel();
     }
 }
+
+
