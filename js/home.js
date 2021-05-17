@@ -30,22 +30,30 @@ Http.onreadystatechange = (e) => {
         var counter=0;
         Object.entries(Teaser).forEach(([ident, app]) => {
             console.log(ident + ' - ' + app);
-            var slides = document.querySelectorAll('.carousel-item');
-            console.log(slides)
-            var slide = slides[counter]
-            console.log(slide)
-            var slide_image = slide.querySelector('img');
-            console.log(slide_image)
-            var slide_caption = slide.querySelector('h5');
-            console.log(slide_caption)
+            var button_tpl = document.querySelector('#carousel-button');
+            var button_nav = button_tpl.content.querySelector('button');
+
+            var slide_tpl = document.querySelector('#carousel-element');
+            var slide_item = slide_tpl.content.querySelector('.carousel-item');
+            var slide_image = slide_tpl.content.querySelector('img');
+            var slide_caption = slide_tpl.content.querySelector('h5');
 
             slide_image.src = app.images.banner;
             slide_caption.textContent = app.name;
+            button_nav.setAttribute('data-bs-slide-to', counter);
+            slide_item.setAttribute('class', 'carousel-item');
             if (counter == 0) {
-                slide.setAttribute('class', 'carousel-item active');
-            } else {
-                slide.setAttribute('class', 'carousel-item');
+                slide_item.setAttribute('class', 'carousel-item active');
+                button_nav.setAttribute('aria-current', 'true');
             }
+
+            var carousel_elements = document.querySelector('#carousel-elements');
+            var carousel_navigation = document.querySelector('#carousel-navigation');
+            var clone_element = document.importNode(slide_tpl.content, true);
+            var clone_nav = document.importNode(button_tpl.content, true);
+            carousel_elements.appendChild(clone_element);
+            carousel_navigation.appendChild(clone_nav);
+
             counter++;
         })
         $('#carouselTeaser').carousel();
