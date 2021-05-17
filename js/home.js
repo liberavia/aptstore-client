@@ -1,3 +1,7 @@
+$("#template_appcard").load("templates/appcard.html");
+$("#template_carousel_button").load("templates/carousel_button.html");
+$("#template_carousel_element").load("templates/carousel_element.html");
+
 const Http = new XMLHttpRequest();
 const url='http://localhost:8000/api/';
 Http.open("GET", url);
