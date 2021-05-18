@@ -23,7 +23,7 @@ Http.onreadystatechange = (e) => {
             card_urls[1].href = "index.html?page=details&ident=" + ident;
             card_title.textContent = app.name;
             card_desc.textContent = app.description;
-            card_image.src = app.images.banner;
+            card_image.src = app.image_thumb;
 
             var appcards = document.getElementById('appcards');
             var clone = document.importNode(card.content, true);
@@ -42,7 +42,7 @@ Http.onreadystatechange = (e) => {
             var slide_image = slide_tpl.content.querySelector('img');
             var slide_caption = slide_tpl.content.querySelector('h5');
 
-            slide_image.src = app.images.banner;
+            slide_image.src = app.image_banner;
             slide_caption.textContent = app.name;
             button_nav.setAttribute('data-bs-slide-to', counter);
             slide_item.setAttribute('class', 'carousel-item');

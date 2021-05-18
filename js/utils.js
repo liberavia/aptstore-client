@@ -13,3 +13,11 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
     return false;
 };
+
+function includeAppcard(includeTarget) {
+    $(includeTarget).load("templates/appcard.html");
+}
+
+function includeCarouselButton(includeTarget, carouselTarget) {
+    $(includeTarget).load("templates/carousel_button.html");
+}
