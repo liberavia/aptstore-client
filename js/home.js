@@ -1,26 +1,30 @@
+// add templates
 $("#template_appcard").load("templates/appcard.html");
 $("#template_carousel_button").load("templates/carousel_button.html");
 $("#template_carousel_element").load("templates/carousel_element.html");
 
+// request api
 const Http = new XMLHttpRequest();
 const url='http://localhost:8000/api/';
 Http.open("GET", url);
 Http.send();
 
+// process api result
 Http.onreadystatechange = (e) => {
     if(Http.readyState === XMLHttpRequest.DONE) {
         MainPageData = JSON.parse(Http.responseText);
 
         Featured = MainPageData.featured
-        Object.entries(Featured).forEach(([ident, app]) => {
-            console.log(ident + ' - ' + app);
+        Object.entries(Featured).forEach((app) => {
+            app = app[1]
+            console.log(app)
             var card = document.querySelector('#appcard');
             var card_title = card.content.querySelector('h5');
             var card_desc = card.content.querySelector('p');
             var card_image = card.content.querySelector('img');
             var card_urls = card.content.querySelectorAll('a');
-            card_urls[0].href = "index.html?page=details&ident=" + ident;
-            card_urls[1].href = "index.html?page=details&ident=" + ident;
+            card_urls[0].href = "index.html?page=details&id=" + app.id;
+            card_urls[1].href = "index.html?page=details&id=" + app.id;
             card_title.textContent = app.name;
             card_desc.textContent = app.description;
             card_image.src = app.image_thumb;
@@ -32,8 +36,9 @@ Http.onreadystatechange = (e) => {
 
         Teaser = MainPageData.teaser
         var counter=0;
-        Object.entries(Teaser).forEach(([ident, app]) => {
-            console.log(ident + ' - ' + app);
+        Object.entries(Teaser).forEach((app) => {
+        app = app[1]
+            console.log(app)
             var button_tpl = document.querySelector('#carousel-button');
             var button_nav = button_tpl.content.querySelector('button');
 
