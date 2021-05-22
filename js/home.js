@@ -17,7 +17,6 @@ Http.onreadystatechange = (e) => {
         Featured = MainPageData.featured
         Object.entries(Featured).forEach((app) => {
             app = app[1]
-            console.log(app)
             var card = document.querySelector('#appcard');
             var card_title = card.content.querySelector('h5');
             var card_desc = card.content.querySelector('p');
@@ -37,8 +36,7 @@ Http.onreadystatechange = (e) => {
         Teaser = MainPageData.teaser
         var counter=0;
         Object.entries(Teaser).forEach((app) => {
-        app = app[1]
-            console.log(app)
+            app = app[1]
             var button_tpl = document.querySelector('#carousel-button');
             var button_nav = button_tpl.content.querySelector('button');
 

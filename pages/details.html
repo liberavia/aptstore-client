@@ -7,32 +7,29 @@
         </div>
         <div class="col-sm-6">
             <div class="row align-items-start">
-                <div class="col-sm-6 align-self-end">
-                    <h1>App name</h1>
+                <h1>App name</h1>
+            </div>
+            <div class="row mt-2">
+                <div id="categories" class="col-sm-6 align-self-start">
+                </div>
+                <div id="rating_avg" class="col-sm-4 align-self-end">
+                    <span id="star1" class="fa fa-star"></span>
+                    <span id="star2" class="fa fa-star"></span>
+                    <span id="star3" class="fa fa-star"></span>
+                    <span id="star4" class="fa fa-star"></span>
+                    <span id="star5" class="fa fa-star"></span>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-6 align-self-start">
-                    <span class="badge rounded-pill bg-primary">Category</span>
-                </div>
-                <div class="col-sm-4 align-self-end">
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
-                    <span class="fa fa-star"></span>
-                </div>
-            </div>
-            <div class="row">
+            <div class="row mt-2">
                 <div id="age_recommendation" class="col align-self-end">
-                    <img id="usk" class="usk_default" src="https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/16j.png">
+                    <img id="usk" class="usk_default" src="https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/0j.png">
                 </div>
             </div>
-            <div class="row align-items-end">
+            <div class="row align-items-end mt-2">
                 <div class="col align-self-end">
                     <div class="row">
                         <div class="col">
-                            <select class="form-select" aria-label="Default select example">
+                            <select id="platform" class="form-select" aria-label="Default select example">
                                 <option selected>Proton</option>
                             </select>
                         </div>
@@ -45,6 +42,32 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row mt-2">
+        <div id="carouselScreenshots" class="carousel slide" data-bs-ride="carousel">
+            <div id="carousel-navigation" class="carousel-indicators">
+                <!-- carousel navigation -->
+            </div>
+            <div id="carousel-elements" class="carousel-inner">
+                <!-- carousel elements -->
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselScreenshots" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselScreenshots" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <h2>Description</h2>
+        <div id="description"></div>
+    </div>
+    <div class="row mt-2">
+        <h2>Reviews</h2>
+        <div id="reviews"></div>
     </div>
 </main>
 <script src="js/details.js" type="text/javascript"></script>
