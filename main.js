@@ -1,5 +1,4 @@
-const { app, BrowserWindow } = require('electron');
-
+const { app, BrowserWindow, Menu } = require('electron')
 const url = require("url");
 const path = require("path");
 
@@ -7,8 +6,8 @@ let mainWindow
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 1024,
     webPreferences: {
       nodeIntegration: true
     }
@@ -29,7 +28,7 @@ console.log(app);
 app.on('ready', createWindow)
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  app.quit()
 })
 
 app.on('activate', function () {
