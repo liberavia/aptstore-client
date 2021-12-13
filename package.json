@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/liberavia/aptstore-client#readme",
   "scripts": {
-    "start" : "vue-cli-service build && electron .",
+    "start": "vue-cli-service build && electron .",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -34,6 +34,7 @@
     "electron": "^16.0.4",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "vue-gamepad": "^1.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
