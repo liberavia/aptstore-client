@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
+  "description": "The desktop aptstore application",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liberavia/aptstore-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liberavia/aptstore-client/issues"
+  },
+  "homepage": "https://github.com/liberavia/aptstore-client#readme",
   "scripts": {
     "start" : "vue-cli-service build && electron .",
     "serve": "vue-cli-service serve",
