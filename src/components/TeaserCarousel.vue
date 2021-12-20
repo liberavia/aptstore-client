@@ -1,12 +1,12 @@
 <template>
     <div>
         <b-carousel
-            id="carousel-1"
+            id="teaser-carousel"
             v-model="slide"
             :interval="4000"
             controls
             indicators
-            background="#ababab"
+            background="#333333"
             img-width="1024"
             img-height="200"
             label-next=""
@@ -14,24 +14,19 @@
             style="text-shadow: 1px 1px 2px #333;"
             @sliding-start="onSlideStart"
             @sliding-end="onSlideEnd"
-            >
-                <b-carousel-slide 
-                    v-for="app in getTeaserApps"
-                    :key="app.app_id"
-                    :caption="app.title"
-                    :img-src="app.banner_image"
-                ></b-carousel-slide>
-            </b-carousel>
-
-            <p class="mt-4">
-                Slide #: {{ slide }}<br>
-                Sliding: {{ sliding }}
-            </p>    
+        >
+            <b-carousel-slide 
+                v-for="app in getTeaserApps"
+                :key="app.id"
+                :caption="app.name"
+                :img-src="app.image_banner"
+            ></b-carousel-slide>
+        </b-carousel>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: "TeaserCarousel",
@@ -43,6 +38,7 @@ export default {
     },
     computed: mapGetters(['getTeaserApps']),
     methods: {
+        ...mapActions(['fetchTeaserApps']),
         onSlideStart() {
             this.sliding = true
         },
@@ -50,6 +46,9 @@ export default {
             this.sliding = false
         }
     },
+    created() {
+        this.fetchTeaserApps();
+    }
 }
 </script>
 
