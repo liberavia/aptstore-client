@@ -2,7 +2,6 @@
     <div>
         <b-carousel
             id="teaser-carousel"
-            fade
             v-model="slide"
             :interval="4000"
             controls

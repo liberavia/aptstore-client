@@ -9,6 +9,7 @@
                 :key="app.id"
                 class="card" 
                 style="width: 19rem;"
+                @click="goToDetails(app.id)"
             >
                 <div class="hvr-grow mx-auto">
                     <a href="#">
@@ -34,6 +35,9 @@ export default {
     computed: mapGetters(['getFeaturedApps']),
     methods: {
         ...mapActions(['fetchFeaturedApps']),
+        goToDetails(id) {
+            this.$router.push(`details/${id}`);
+        },
     },
     created() {
         this.fetchFeaturedApps();
