@@ -11,14 +11,14 @@
         <b-form-input placeholder="Search App..."></b-form-input>
       </b-navbar-nav>
       <b-navbar-nav>
-        <b-nav-item-dropdown text="Settings" variant="dark">
-          <b-dropdown-item @click="openGeneralSettings()">General settings...</b-dropdown-item>
-          <b-dropdown-item @click="openManagePlatforms()">Manage platforms...</b-dropdown-item>
+        <b-nav-item-dropdown right text="Settings" variant="dark">
+          <b-dropdown-item variant="dark" @click="openGeneralSettings()">General settings...</b-dropdown-item>
+          <b-dropdown-item variant="dark" @click="openManagePlatforms()">Manage platforms...</b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item-dropdown text="Lang" variant="dark">
-          <b-dropdown-item @click="changeLangTo('en')">EN</b-dropdown-item>
-          <b-dropdown-item @click="changeLangTo('de')">DE</b-dropdown-item>
-          <b-dropdown-item @click="changeLangTo('es')">ES</b-dropdown-item>
+        <b-nav-item-dropdown right text="Lang" variant="dark">
+          <b-dropdown-item variant="dark" @click="changeLangTo('en')">EN</b-dropdown-item>
+          <b-dropdown-item variant="dark" @click="changeLangTo('de')">DE</b-dropdown-item>
+          <b-dropdown-item variant="dark" @click="changeLangTo('es')">ES</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar>

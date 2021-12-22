@@ -101,16 +101,6 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
-.btn-primary {
-  background-color: #2c057a;
-  border-color: #2c057a;
-}
-
-.btn-primary:hover {
-  background-color: #9012a3;
-  border-color: #9012a3;
-}
-
 .card img {
   max-height: 145px;
   width: auto !important;
