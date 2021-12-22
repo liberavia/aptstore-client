@@ -11,11 +11,49 @@
         <b-form-input placeholder="Search App..."></b-form-input>
       </b-navbar-nav>
       <b-navbar-nav>
-        <b-button size="lg" class="mb-2" variant="dark">
-          <b-icon icon="gear-fill" @click="openGeneralSettings()" aria-hidden="true"></b-icon>
+        <b-button size="lg" class="mb-2" variant="dark" v-b-modal.settings-modal>
+          <b-icon icon="gear-fill" aria-hidden="true"></b-icon>
         </b-button>
       </b-navbar-nav>
     </b-navbar>
+    <b-modal 
+      id="settings-modal"
+      size="lg"
+      title="Settings"
+      header-bg-variant="dark"
+      header-text-variant="light"
+      body-bg-variant="dark"
+      body-text-variant="light"
+      footer-bg-variant="dark"
+      footer-text-variant="light"
+    >
+      <template #modal-header>
+        <h5>Settings</h5>
+      </template>
+      <template #default>
+        <b-card no-body>
+          <b-tabs pills card vertical v-model="tabSettingsIndex">
+            <b-tab title="General" :title-link-class="linkSettingsTabClass(0)" active>
+              <b-card-text>Content general settings</b-card-text>
+            </b-tab>
+            <b-tab title="Platforms" :title-link-class="linkSettingsTabClass(1)">
+              <b-card-text>Content platform settings</b-card-text>
+            </b-tab>
+            <b-tab title="Misc" :title-link-class="linkSettingsTabClass(2)">
+              <b-card-text>Content miscellaneous settings</b-card-text>
+            </b-tab>
+          </b-tabs>
+        </b-card>
+      </template>
+      <template #modal-footer="{ ok, cancel }">
+        <b-button size="sm" variant="success" @click="ok()">
+          OK
+        </b-button>
+        <b-button size="sm" @click="cancel()">
+          Cancel
+        </b-button>
+      </template>
+    </b-modal>    
   </div>  
 </template>
 
@@ -30,18 +68,20 @@ export default Vue.extend({
   },
   data() {
     return {
+      tabSettingsIndex: 0,
     };
   },
   methods: {
       changeLangTo(language) {
           alert(`Change language to ${language}`);
       },
-      openGeneralSettings() {
-          alert("Open general settings");
-      },
-      openManagePlatforms() {
-          alert("Open manage platforms");
-      },
+      linkSettingsTabClass(idx) {
+        if (this.tabSettingsIndex === idx) {
+          return ['bg-light', 'text-dark']
+        } else {
+          return ['bg-dark', 'text-light']
+        }
+      },      
   },
 });
 </script>
