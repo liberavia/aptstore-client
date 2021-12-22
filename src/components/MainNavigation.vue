@@ -11,15 +11,9 @@
         <b-form-input placeholder="Search App..."></b-form-input>
       </b-navbar-nav>
       <b-navbar-nav>
-        <b-nav-item-dropdown right text="Settings" variant="dark">
-          <b-dropdown-item variant="dark" @click="openGeneralSettings()">General settings...</b-dropdown-item>
-          <b-dropdown-item variant="dark" @click="openManagePlatforms()">Manage platforms...</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item-dropdown right text="Lang" variant="dark">
-          <b-dropdown-item variant="dark" @click="changeLangTo('en')">EN</b-dropdown-item>
-          <b-dropdown-item variant="dark" @click="changeLangTo('de')">DE</b-dropdown-item>
-          <b-dropdown-item variant="dark" @click="changeLangTo('es')">ES</b-dropdown-item>
-        </b-nav-item-dropdown>
+        <b-button size="lg" class="mb-2" variant="dark">
+          <b-icon icon="gear-fill" @click="openGeneralSettings()" aria-hidden="true"></b-icon>
+        </b-button>
       </b-navbar-nav>
     </b-navbar>
   </div>  

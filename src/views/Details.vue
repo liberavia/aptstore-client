@@ -14,12 +14,11 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6 align-self-start">
-                        <b-badge 
+                        <span 
                             v-for="category in currentApp.categories"
                             :key="category"
-                            pill 
-                            variant="primary"
-                        >{{ category }}</b-badge>
+                            class="badge rounded-pill bg-primary"
+                        >{{ category }}</span>
                     </div>
                     <div class="col-sm-4 align-self-end">
                         <b-form-rating 
@@ -57,29 +56,31 @@
             </div>
         </div>
         <div class="row">
-            <h5>{{ currentApp.description_short }}</h5>
+            <b-card bg-variant="dark" text-variant="white">
+                <b-card-text>{{ currentApp.description_short }}</b-card-text>
+            </b-card>            
         </div>
         <div v-if="currentApp.screenshots.length > 0" class="row">
-            <b-carousel
-                id="app-screenshots"
-                v-model="slide"
-                :interval="4000"
-                controls
-                indicators
-                fade
-                background="#333333"
-                img-width="1024"
-                img-height="200"
-                label-next=""
-                label-prev=""
-                style="text-shadow: 1px 1px 2px #333;"
-            >
-                <b-carousel-slide 
-                    v-for="screenshot in currentApp.screenshots"
-                    :key="screenshot.id"
-                    :img-src="screenshot.image"
-                ></b-carousel-slide>
-            </b-carousel>
+            <b-container bg-variant="dark" text-variant="white">
+                <b-carousel
+                    id="app-screenshots"
+                    v-model="slide"
+                    :interval="4000"
+                    controls
+                    indicators
+                    fade
+                    background="#333333"
+                    label-next=""
+                    label-prev=""
+                    style="text-shadow: 1px 1px 2px #333;"
+                >
+                    <b-carousel-slide 
+                        v-for="screenshot in currentApp.screenshots"
+                        :key="screenshot.id"
+                        :img-src="screenshot.image"
+                    ></b-carousel-slide>
+                </b-carousel>
+            </b-container>            
         </div>
         <div class="row">
             <h6>{{ currentApp.description_long }}</h6>

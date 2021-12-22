@@ -169,4 +169,9 @@ a {
     margin-bottom: 10px;
     margin-top: 10px;
 }
+
+.form-control {
+  background-color: #333 !important;
+  color: white !important;
+}
 </style>
