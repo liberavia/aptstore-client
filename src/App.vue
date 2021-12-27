@@ -160,12 +160,12 @@ a {
 }
 
 .app_details_mainicon_box {
-    width: 250px;
+    width: 250px !important;
     height: auto;
 }
 
 .usk_default {
-    height: 40px;
+    height: 40px !important;
     margin-bottom: 10px;
     margin-top: 10px;
 }

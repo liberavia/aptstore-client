@@ -5,6 +5,16 @@
         <img class="navbar-logo" src="../assets/logo.png" alt="Aptstore Logo">
       </b-navbar-brand>
       <b-navbar-nav>
+        <b-button 
+          size="lg" 
+          class="mb-2" 
+          variant="dark"
+          @click="goBack()"
+        >
+          <b-icon icon="chevron-left" aria-hidden="true"></b-icon>
+        </b-button>
+      </b-navbar-nav>
+      <b-navbar-nav>
         <b-nav-item to="/">Home</b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="d-none d-md-block mx-auto">
@@ -81,7 +91,10 @@ export default Vue.extend({
         } else {
           return ['bg-dark', 'text-light']
         }
-      },      
+      },
+      goBack() {
+        this.$router.go(-1);
+      }, 
   },
 });
 </script>

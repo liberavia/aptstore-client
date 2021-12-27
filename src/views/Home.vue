@@ -15,5 +15,8 @@ export default {
     TeaserCarousel,
     FeaturedApps
   },
+  mounted() {
+    document.title = 'Aptstore - Home'
+  },  
 }
 </script>

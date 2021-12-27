@@ -19,8 +19,15 @@
                 v-for="app in getTeaserApps"
                 :key="app.id"
                 :caption="app.name"
-                :img-src="app.image_banner"
-            ></b-carousel-slide>
+            >
+                <template #img>
+                    <img 
+                        :src="app.image_banner"
+                        style="cursor: pointer;"
+                        @click="goToDetails(app.id)"
+                    >
+                </template>
+            </b-carousel-slide>
         </b-carousel>
     </div>
 </template>
@@ -33,7 +40,7 @@ export default {
     data() {
         return {
             slide: 0,
-            sliding: null
+            sliding: null,
         }
     },
     computed: mapGetters(['getTeaserApps']),
@@ -44,7 +51,10 @@ export default {
         },
         onSlideEnd() {
             this.sliding = false
-        }
+        },
+        goToDetails(id) {
+            this.$router.push(`details/${id}`);
+        },
     },
     created() {
         this.fetchTeaserApps();
