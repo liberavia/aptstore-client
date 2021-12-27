@@ -1,9 +1,33 @@
-body {
-  background: #111;
-  color: #fff;
-  margin-top: 5rem;
-}
+<template>
+  <div id="app" v-bind:style="{ backgroundColor: bcolor}">
+    <MainNavigation />
+    <router-view />
+  </div>
+</template>
 
+<script>
+import MainNavigation from './components/MainNavigation.vue'
+
+export default {
+  name: 'MainApp',
+  created: function () {
+    document.body.style.backgroundColor = this.bcolor;
+  },
+  destroyed: function () {
+    document.body.style.backgroundColor = null;
+  },  
+  data() {
+    return {
+      bcolor: '#333333',
+    };
+  },
+  components: {
+    MainNavigation,
+  }
+}
+</script>
+
+<style>
 .card {
     margin: 8px;
     background-color: #222;
@@ -11,6 +35,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: #fff;
+  margin-top: 10px;
 }
 
 ul {
@@ -19,18 +44,6 @@ ul {
 
 .bg-steel {
   background-color: #2c057a;
-}
-
-.site-header .navbar-nav .nav-link {
-  color: #cbd5db;
-}
-
-.site-header .navbar-nav .nav-link:hover {
-  color: #ffffff;
-}
-
-.site-header .navbar-nav .nav-link.active {
-  font-weight: 500;
 }
 
 .content-section {
@@ -88,33 +101,17 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
-.btn-primary {
-    background-color: #2c057a;
-    border-color: #2c057a;
-}
-
-.btn-primary:hover {
-    background-color: #9012a3;
-    border-color: #9012a3;
-}
-
 .card img {
-    max-height: 145px;
-    width: auto !important;
-    height: auto;
-    max-width: 265px;
-    text-align: center;
+  max-height: 145px;
+  width: auto !important;
+  height: auto;
+  max-width: 265px;
+  text-align: center;
 }
 
 .bg-image {
-    text-align: center;
+  text-align: center;
 }
-
-.carousel-item {
-    height: 290px;
-    width: auto;
-}
-
 
 /* Grow */
 .hvr-grow {
@@ -161,3 +158,20 @@ a {
     animation: fadein 4s;
     -webkit-animation: fadein 4s;
 }
+
+.app_details_mainicon_box {
+    width: 250px !important;
+    height: auto;
+}
+
+.usk_default {
+    height: 40px !important;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.form-control {
+  background-color: #333 !important;
+  color: white !important;
+}
+</style>
