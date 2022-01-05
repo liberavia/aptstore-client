@@ -6,17 +6,17 @@
 </template>
 
 <script>
-import TeaserCarousel from '../components/TeaserCarousel.vue';
-import FeaturedApps from '../components/FeaturedApps.vue';
+  import TeaserCarousel from '../components/TeaserCarousel.vue';
+  import FeaturedApps from '../components/FeaturedApps.vue';
 
-export default {
-  name: 'Home',
-  components: {
-    TeaserCarousel,
-    FeaturedApps
-  },
-  mounted() {
-    document.title = 'Aptstore - Home'
-  },  
-}
+  export default {
+    name: 'Home',
+    components: {
+      TeaserCarousel,
+      FeaturedApps
+    },
+    mounted() {
+      document.title = 'Aptstore - Home'
+    },  
+  }
 </script>

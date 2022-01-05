@@ -33,33 +33,33 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
 
-export default {
-    name: "TeaserCarousel",
-    data() {
-        return {
-            slide: 0,
-            sliding: null,
+    export default {
+        name: "TeaserCarousel",
+        data() {
+            return {
+                slide: 0,
+                sliding: null,
+            }
+        },
+        computed: mapGetters(['getTeaserApps']),
+        methods: {
+            ...mapActions(['fetchTeaserApps']),
+            onSlideStart() {
+                this.sliding = true
+            },
+            onSlideEnd() {
+                this.sliding = false
+            },
+            goToDetails(id) {
+                this.$router.push(`details/${id}`);
+            },
+        },
+        created() {
+            this.fetchTeaserApps();
         }
-    },
-    computed: mapGetters(['getTeaserApps']),
-    methods: {
-        ...mapActions(['fetchTeaserApps']),
-        onSlideStart() {
-            this.sliding = true
-        },
-        onSlideEnd() {
-            this.sliding = false
-        },
-        goToDetails(id) {
-            this.$router.push(`details/${id}`);
-        },
-    },
-    created() {
-        this.fetchTeaserApps();
     }
-}
 </script>
 
 <style scoped>

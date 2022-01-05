@@ -28,21 +28,21 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
 
-export default {
-    name: 'FeaturedApps',
-    computed: mapGetters(['getFeaturedApps']),
-    methods: {
-        ...mapActions(['fetchFeaturedApps']),
-        goToDetails(id) {
-            this.$router.push(`details/${id}`);
+    export default {
+        name: 'FeaturedApps',
+        computed: mapGetters(['getFeaturedApps']),
+        methods: {
+            ...mapActions(['fetchFeaturedApps']),
+            goToDetails(id) {
+                this.$router.push(`details/${id}`);
+            },
         },
-    },
-    created() {
-        this.fetchFeaturedApps();
+        created() {
+            this.fetchFeaturedApps();
+        }
     }
-}
 </script>
 
 <style scoped>

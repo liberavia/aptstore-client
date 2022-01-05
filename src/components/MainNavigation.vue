@@ -68,35 +68,35 @@
 </template>
 
 <script>
-import Vue from 'vue';
+  import Vue from 'vue';
 
-export default Vue.extend({
-  name: 'MainNavigation',
-  components: {
-  },
-  props: {
-  },
-  data() {
-    return {
-      tabSettingsIndex: 0,
-    };
-  },
-  methods: {
-      changeLangTo(language) {
-          alert(`Change language to ${language}`);
-      },
-      linkSettingsTabClass(idx) {
-        if (this.tabSettingsIndex === idx) {
-          return ['bg-light', 'text-dark']
-        } else {
-          return ['bg-dark', 'text-light']
-        }
-      },
-      goBack() {
-        this.$router.go(-1);
-      }, 
-  },
-});
+  export default Vue.extend({
+    name: 'MainNavigation',
+    components: {
+    },
+    props: {
+    },
+    data() {
+      return {
+        tabSettingsIndex: 0,
+      };
+    },
+    methods: {
+        changeLangTo(language) {
+            alert(`Change language to ${language}`);
+        },
+        linkSettingsTabClass(idx) {
+          if (this.tabSettingsIndex === idx) {
+            return ['bg-light', 'text-dark']
+          } else {
+            return ['bg-dark', 'text-light']
+          }
+        },
+        goBack() {
+          this.$router.go(-1);
+        }, 
+    },
+  });
 </script>
 
 <style scoped>

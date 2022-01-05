@@ -100,30 +100,30 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
 
-export default {
-    name: 'Details',
-    computed: mapGetters(['currentApp']),
-    data() {
-        return {
-            avg_rating: 3.5,
-            slide: 0,
-        }
-    },
-    methods: {
-        ...mapActions(['fetchApp']),
-        getUskImage(age) {
-            return `https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/${age}j.png`;
-        }
-    },
-    created() {
-        this.fetchApp(this.$route.params.id);
-    },
-    mounted() {
-        document.title = 'Aptstore';
-    },  
-}
+    export default {
+        name: 'Details',
+        computed: mapGetters(['currentApp']),
+        data() {
+            return {
+                avg_rating: 3.5,
+                slide: 0,
+            }
+        },
+        methods: {
+            ...mapActions(['fetchApp']),
+            getUskImage(age) {
+                return `https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/${age}j.png`;
+            }
+        },
+        created() {
+            this.fetchApp(this.$route.params.id);
+        },
+        mounted() {
+            document.title = 'Aptstore';
+        },  
+    }
 </script>
 
 <style scoped>
