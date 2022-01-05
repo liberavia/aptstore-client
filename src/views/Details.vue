@@ -38,23 +38,7 @@
                             </div>
                         </div>
                         <div class="row align-items-end">
-                            <div class="col align-self-end">
-                                <div class="row">
-                                    <div class="col">
-                                        <select class="form-select">
-                                            <option
-                                                v-for="platform in currentApp.platforms"
-                                                :key="platform"
-                                            >{{ platform }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <b-button variant="success">Install</b-button>
-                                        <b-button variant="danger">Remove</b-button>
-                                        <b-button variant="warning">Launch</b-button>                                
-                                    </div>
-                                </div>
-                            </div>
+                            <DetailsActions :currentApp="currentApp" />
                         </div>
                     </b-card>
                 </b-card-group>
@@ -101,9 +85,13 @@
 
 <script>
     import { mapGetters, mapActions } from 'vuex';
+    import DetailsActions from '../components/DetailsActions.vue';
 
     export default {
         name: 'Details',
+        components: {
+            DetailsActions
+        },
         computed: mapGetters(['currentApp']),
         data() {
             return {
