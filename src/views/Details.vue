@@ -38,7 +38,10 @@
                             </div>
                         </div>
                         <div class="row align-items-end">
-                            <DetailsActions :currentApp="currentApp" />
+                            <DetailsActions 
+                                :currentApp="currentApp" 
+                                :selectedPlatform="currentApp.platforms[0]"
+                            />
                         </div>
                     </b-card>
                 </b-card-group>

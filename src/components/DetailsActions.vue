@@ -3,15 +3,14 @@
         <div class="row">
             <div class="col">
                 <select 
-                    id="details_select_platform"
                     class="form-select"
-                    :v-model="selectedPlatform"
+                    v-model="selectedPlatform"
                 >
                     <option
                         class="form-select"
                         v-for="platform in currentApp.platforms"
                         :key="platform"
-                        :value="platform"
+                        v-bind:value="platform"
                     >{{ platform }}</option>
                 </select>
             </div>
@@ -29,17 +28,13 @@
 <script>
 export default {
     name: 'DetailsActions',
-    props: ['currentApp'],
-    data() {
-        return {
-            selectedPlatform: '',
-        };
-    },
+    props: ['currentApp', 'selectedPlatform'],
     methods: {
         isInstalled() {
             return true;
         },
         removeApp() {
+            alert(`default is ${this.currentApp.platforms[0]}`)
             alert(`remove ${this.selectedPlatform}-App`);
         },
         launchApp() {
