@@ -26,11 +26,19 @@
 </template>
 
 <script>
+import { remote } from 'electron'
+import { path } from 'path'
+
 export default {
     name: 'DetailsActions',
     props: ['currentApp', 'selectedPlatform'],
     methods: {
         isInstalled() {
+            const userHomeDir = remote.app.getPath('home');
+            const installedBaseDir = '/.aptstore/reports/installed/';
+            const installedDir = path.join(userHomeDir, installedBaseDir, this.selectedPlatform);
+            const filePath = path.join(installedDir, `/${this.currentApp.ident}.json`);
+            this.$electron.ipcRenderer.sendSync('ping')
             return true;
         },
         removeApp() {
@@ -47,6 +55,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    .form-select {
+        background-color: #212529;
+        color: white;
+        border-color: #333;
+    };
+    .rating {
+        background-color: #212529 !important;
+    };
 </style>
