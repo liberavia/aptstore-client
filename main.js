@@ -40,5 +40,6 @@ app.on('activate', function () {
 
 ipcMain.on('check:file:exists', function(e, filePath) {
   console.log(`file exists has been called with the following path: ${filePath}`);
-  return 'my answer';
+  console.log('Faking a reply of true');
+  e.reply('response:file:exists', 'my fancy value')
 });
