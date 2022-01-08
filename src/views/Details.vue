@@ -87,7 +87,7 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex';
+    import axios from "axios";
     import DetailsActions from '../components/DetailsActions.vue';
 
     export default {
@@ -95,23 +95,27 @@
         components: {
             DetailsActions
         },
-        computed: mapGetters(['currentApp']),
         data() {
             return {
+                currentApp: {},
                 avg_rating: 3.5,
                 slide: 0,
             }
         },
         methods: {
-            ...mapActions(['fetchApp']),
             getUskImage(age) {
                 return `https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/${age}j.png`;
+            },
+            async setApp(appId) {
+                const baseurl = process.env.VUE_APP_APTSTORE_BASE_URL;
+                const appurl = `${baseurl}api/app/${appId}`;
+                axios.get(appurl).then((response) => {
+                    this.currentApp = response.data;
+                });
             }
         },
-        created() {
-            this.fetchApp(this.$route.params.id);
-        },
         mounted() {
+            this.setApp(this.$route.params.id);
             document.title = 'Aptstore';
         },  
     }

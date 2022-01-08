@@ -38,6 +38,8 @@ export default {
         }
     },
     mounted() {
+        console.log(this.currentApp);
+        console.log(this.selectedPlatform);
         this.$nextTick(function () {
             window.ipcRenderer.receive('response:file:home:exists', (e, fileExists) => {
                 console.log(`response:file:home:exists DATA: ${fileExists}`);
