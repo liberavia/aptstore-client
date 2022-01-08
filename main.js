@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const url = require("url");
 const path = require("path");
 
@@ -9,7 +9,10 @@ function createWindow() {
     width: 1280,
     height: 1024,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: true,
+      preload: path.join(__dirname, 'src/preload.js'),
     }
   })
 
@@ -24,7 +27,7 @@ function createWindow() {
     mainWindow = null
   })
 }
-console.log(app);
+
 app.on('ready', createWindow)
 
 app.on('window-all-closed', function () {
@@ -34,3 +37,8 @@ app.on('window-all-closed', function () {
 app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
+
+ipcMain.on('check:file:exists', function(e, filePath) {
+  console.log(`file exists has been called with the following path: ${filePath}`);
+  return 'my answer';
+});

@@ -26,19 +26,14 @@
 </template>
 
 <script>
-import { remote } from 'electron'
-import { path } from 'path'
 
 export default {
     name: 'DetailsActions',
     props: ['currentApp', 'selectedPlatform'],
     methods: {
         isInstalled() {
-            const userHomeDir = remote.app.getPath('home');
-            const installedBaseDir = '/.aptstore/reports/installed/';
-            const installedDir = path.join(userHomeDir, installedBaseDir, this.selectedPlatform);
-            const filePath = path.join(installedDir, `/${this.currentApp.ident}.json`);
-            this.$electron.ipcRenderer.sendSync('ping')
+            console.log('Entering isInstalled()');
+            window.ipcRenderer.send('check:file:exists', '/path/to/file');
             return true;
         },
         removeApp() {
