@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const url = require("url");
 const path = require("path");
+const fs = require("fs");
+const { spawn } = require("child_process");
 
 let mainWindow
 
@@ -38,8 +40,50 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-ipcMain.on('check:file:exists', function(e, filePath) {
-  console.log(`file exists has been called with the following path: ${filePath}`);
-  console.log('Faking a reply of true');
-  e.reply('response:file:exists', 'my fancy value')
+ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
+  const userHome = app.getPath('home');  
+  const systemPath = path.join(userHome, fileHomePath);
+  let response = false;
+  try {
+    if (fs.existsSync(systemPath)) {
+      response = true;
+    }
+  } catch(err) {
+    console.log(`Catched error ${JSON.stringify(err)}`);
+  }
+  e.reply('response:file:home:exists', response)
+});
+
+/**
+ * Demo for nonblocking cli usage 
+ */
+ipcMain.on('cat:file:home', function(e, fileHomePath) {
+  const userHome = app.getPath('home');  
+  const systemPath = path.join(userHome, fileHomePath);
+  try {
+    if (fs.existsSync(systemPath)) {
+      const cat = spawn('cat', [systemPath]);
+
+      cat.stdout.on("data", data => {
+          console.log(`stdout: ${data}`);
+          e.reply('response:cat:file:home', stdout)
+        });
+      
+      cat.stderr.on("data", data => {
+          console.log(`stderr: ${data}`);
+          e.reply('response:cat:file:home', stderr)
+      });
+      
+      cat.on('error', (error) => {
+          console.log(`error: ${error.message}`);
+          e.reply('response:cat:file:home', error)
+      });
+      
+      cat.on("close", code => {
+          console.log(`child process exited with code ${code}`);
+      });      
+    }
+  } catch(err) {
+    e.reply('response:cat:file:home', err)
+  }  
 });

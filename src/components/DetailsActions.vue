@@ -28,7 +28,6 @@
 </template>
 
 <script>
-
 export default {
     name: 'DetailsActions',
     props: ['currentApp', 'selectedPlatform'],
@@ -39,16 +38,23 @@ export default {
         }
     },
     mounted() {
-        console.log('Entering mounted()');
         this.$nextTick(function () {
-            window.ipcRenderer.receive('response:file:exists', (e, fileExists) => {
-                console.log(`Got answer on file exists: ${fileExists}`);
+            window.ipcRenderer.receive('response:file:home:exists', (e, fileExists) => {
+                console.log(`response:file:home:exists DATA: ${fileExists}`);
                 if (fileExists) {
                     this.isInstalled = true;
                 }
                 this.installedStateLoading = false;
             });
-            window.ipcRenderer.send('check:file:exists', '/path/to/file');
+            const pathBaseDir = '/.aptstore/reports/installed/';
+            let pathPlatform = `${this.selectedPlatform}/`;
+            if (this.selectedPlatform == 'proton') {
+                pathPlatform = 'steam/';
+            }
+            const installedDir = pathBaseDir + pathPlatform;
+            const filePath = installedDir + `${this.currentApp.ident}.json`;
+
+            window.ipcRenderer.send('check:file:home:exists', filePath);
         });
     },
     methods: {
