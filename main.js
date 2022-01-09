@@ -54,6 +54,23 @@ ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   e.reply('response:file:home:exists', response)
 });
 
+ipcMain.on('apstore:core:proton:install', function(e, params) {
+  console.log(`triggered proton install for ident ${params.ident} with login ${params.login} and secret ${params.secret}`);
+  e.reply('response:apstore:core:proton:install', 'started')
+  new Promise(r => setTimeout(r, 5000)).then(() => {
+    e.reply(`response:apstore:core:proton:remove`, 'finished');
+  });
+});
+
+ipcMain.on('apstore:core:proton:remove', function(e, params) {
+  console.log(`triggered removing proton app with ident ${params.ident} and login ${params.login} and secret ${params.secret}`);
+  e.reply('response:apstore:core:proton:remove', 'started')
+  new Promise(r => setTimeout(r, 5000)).then(() => {
+    e.reply(`response:apstore:core:proton:remove`, 'finished');
+  });
+});
+
+
 /**
  * Demo for nonblocking cli usage 
  */

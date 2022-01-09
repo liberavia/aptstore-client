@@ -1,5 +1,5 @@
 <template>
-    <b-overlay :show="installedStateLoading" variant="dark">
+    <b-overlay :show="determineAppStateLoading" variant="dark">
         <div class="col align-self-end">
             <div class="row">
                 <div class="col">
@@ -16,11 +16,11 @@
                     </select>
                 </div>
                 <div v-if="isInstalled" class="col">
-                    <b-button variant="danger" @click="removeApp()">Remove</b-button>
-                    <b-button variant="warning" @click="launchApp()">Launch</b-button>                                
+                    <b-button variant="danger" @click="appAction('remove')">Remove</b-button>
+                    <b-button variant="warning" @click="appAction('launch')">Launch</b-button>                                
                 </div>
                 <div v-else class="col">
-                    <b-button variant="success" @click="installApp()">Install</b-button>
+                    <b-button variant="success" @click="appAction('install')">Install</b-button>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@ export default {
     props: ['currentApp', 'selectedPlatform'],
     data() {
         return {
-            installedStateLoading: true,
+            determineAppStateLoading: true,
             isInstalled: false,
         }
     },
@@ -46,7 +46,7 @@ export default {
                 if (fileExists) {
                     this.isInstalled = true;
                 }
-                this.installedStateLoading = false;
+                this.determineAppStateLoading = false;
             });
             const pathBaseDir = '/.aptstore/reports/installed/';
             let pathPlatform = `${this.selectedPlatform}/`;
@@ -60,15 +60,25 @@ export default {
         });
     },
     methods: {
-        removeApp() {
-            alert(`default is ${this.currentApp.platforms[0]}`)
-            alert(`remove ${this.selectedPlatform}-App`);
-        },
-        launchApp() {
-            alert(`launch ${this.selectedPlatform}-App`);
-        },
-        installApp() {
-            alert(`install ${this.selectedPlatform}-App`);
+        appAction(action) {
+            const ipcChannel = `apstore:core:${this.selectedPlatform}:${action}`;
+
+            window.ipcRenderer.receive(`response:${ipcChannel}`, (e, currentState) => {
+                if (currentState == 'started') {
+                    this.determineAppStateLoading = true;
+                }
+                if (currentState == 'finished') {
+                    this.determineAppStateLoading = false;
+                }
+            });
+            
+            const ipcSendParams = {
+                ident: this.currentApp.ident,
+                login: 'someLogin',
+                secret: 'someSecret'
+            }
+
+            window.ipcRenderer.send(ipcChannel, ipcSendParams);
         },
     },
 }
