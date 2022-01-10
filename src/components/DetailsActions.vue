@@ -20,7 +20,7 @@
                     <b-button variant="warning" @click="appAction('launch')">Launch</b-button>                                
                 </div>
                 <div v-else class="col">
-                    <b-button variant="success" @click="appAction('install')">Install</b-button>
+                    <b-button variant="success" @click="installApp()">Install</b-button>
                 </div>
             </div>
         </div>
@@ -38,9 +38,16 @@ export default {
         }
     },
     mounted() {
-        console.log(this.currentApp);
-        console.log(this.selectedPlatform);
         this.$nextTick(function () {
+            this.determineAppState();
+            this.checkInstalled();
+        });
+    },
+    methods: {
+        determineAppState() {
+
+        },
+        checkInstalled() {
             window.ipcRenderer.receive('response:file:home:exists', (e, fileExists) => {
                 console.log(`response:file:home:exists DATA: ${fileExists}`);
                 if (fileExists) {
@@ -57,9 +64,18 @@ export default {
             const filePath = installedDir + `${this.currentApp.ident}.json`;
 
             window.ipcRenderer.send('check:file:home:exists', filePath);
-        });
-    },
-    methods: {
+        },
+        installApp() {
+            const queueElement = {
+                action: 'install',
+                platform: this.selectedPlatform,
+                ident: this.currentApp.ident,
+                name: this.currentApp.name,
+                login: 'someLogin',
+                secret: 'someSecret'
+            };
+            this.addToQueue(queueElement);
+        },
         appAction(action) {
             const ipcChannel = `apstore:core:${this.selectedPlatform}:${action}`;
 

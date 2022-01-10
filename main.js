@@ -4,6 +4,9 @@ const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
 
+const PATH_APTSTORE = '.aptstore';
+const PATH_APTSTORE_REPORTS_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress');
+
 let mainWindow
 
 function createWindow() {
@@ -55,6 +58,7 @@ ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
 });
 
 ipcMain.on('apstore:core:proton:install', function(e, params) {
+  // todo: exchange dummy 
   console.log(`triggered proton install for ident ${params.ident} with login ${params.login} and secret ${params.secret}`);
   e.reply('response:apstore:core:proton:install', 'started')
   new Promise(r => setTimeout(r, 5000)).then(() => {
@@ -63,11 +67,49 @@ ipcMain.on('apstore:core:proton:install', function(e, params) {
 });
 
 ipcMain.on('apstore:core:proton:remove', function(e, params) {
+  // todo: exchange dummy 
   console.log(`triggered removing proton app with ident ${params.ident} and login ${params.login} and secret ${params.secret}`);
   e.reply('response:apstore:core:proton:remove', 'started')
   new Promise(r => setTimeout(r, 5000)).then(() => {
     e.reply(`response:apstore:core:proton:remove`, 'finished');
   });
+});
+
+/**
+ * Feeding queue for app actions with progress reports
+ * Periodically updating current progress feeded by aptstore-core reporting
+ * 
+ * @see src/store/modules/queue_app_actions
+ * @see https://github.com/liberavia/aptstore-core/tree/main/aptstore_core/reporting
+ * @todo add more platforms and handle merging results from different folders
+ */
+ipcMain.on('aptstore:progress:current', function(e) {
+  console.log(`triggered aptstore:progress:current`);
+  const userHome = app.getPath('home');
+
+  const progressReportPaths = {
+    steam: path.join(userHome, PATH_APTSTORE_REPORTS_PROGRESS)
+  };
+  console.log(`paths: ${progressReportPaths}`);
+
+  let files = fs.readdirSync(progressReportPaths.steam).filter(fn => fn.endsWith('.log'));
+  console.log(`files: ${files}`);
+
+  if (!files ) {
+    console.log(`respond false to response:aptstore:progress:current`);
+    e.reply(`response:aptstore:progress:current`, false);
+    return;
+  }
+
+  let current = [];
+  files.forEach(function(file){
+    const filePath = path.join(progressReportPaths.steam, file.name);
+    fs.readFileSync(filePath);
+    current.push(fileContent);
+  });
+
+  console.log(`respond to response:aptstore:progress:current: ${current}`);
+  e.reply(`response:aptstore:progress:current`, current);
 });
 
 
