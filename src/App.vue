@@ -6,20 +6,40 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import MainNavigation from './components/MainNavigation.vue'
 
 export default {
   name: 'MainApp',
+  computed: mapGetters([
+    'getPollingStarted',
+    'getIntervalId'
+  ]),
   created: function () {
     document.body.style.backgroundColor = this.bcolor;
+    const pollingStarted = this.getPollingStarted();
+    if (!pollingStarted) {
+      this.startPolling();
+    }
   },
   destroyed: function () {
     document.body.style.backgroundColor = null;
+    const pollingStarted = this.getPollingStarted();
+    const intervalId = this.getIntervalId();
+    if (pollingStarted && intervalId) {
+      this.stopPolling();
+    }
   },  
   data() {
     return {
       bcolor: '#333333',
     };
+  },
+  methods: {
+      ...mapActions([
+        'startPolling',
+        'stopPolling'
+      ]),  
   },
   components: {
     MainNavigation,
