@@ -90,12 +90,12 @@ ipcMain.on('aptstore:progress:current', function(e) {
   const progressReportPaths = {
     steam: path.join(userHome, PATH_APTSTORE_REPORTS_PROGRESS)
   };
-  console.log(`paths: ${progressReportPaths}`);
+  console.log(`paths: ${JSON.stringify(progressReportPaths)}`);
 
   let files = fs.readdirSync(progressReportPaths.steam).filter(fn => fn.endsWith('.log'));
   console.log(`files: ${files}`);
 
-  if (!files ) {
+  if (files.length === 0) {
     console.log(`respond false to response:aptstore:progress:current`);
     e.reply(`response:aptstore:progress:current`, false);
     return;
@@ -112,6 +112,14 @@ ipcMain.on('aptstore:progress:current', function(e) {
   e.reply(`response:aptstore:progress:current`, current);
 });
 
+/**
+ * 
+ */
+ipcMain.on('aptstore:process:next', function(e, nextTask) {
+  console.log(`Calling to progress next task ${JSON.stringify(nextTask)}`);
+  // if everything went well, respond success to receiver
+  e.reply(`response:aptstore:process:next`, true);
+});
 
 /**
  * Demo for nonblocking cli usage 

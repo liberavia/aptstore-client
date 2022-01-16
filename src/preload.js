@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         'apstore:core:proton:install',
         'apstore:core:proton:remove',
         'aptstore:progress:current',
+        'aptstore:process:next'
     ] 
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data)
@@ -20,6 +21,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         'response:apstore:core:proton:install',
         'response:apstore:core:proton:remove',
         'response:aptstore:progress:current',
+        'response:aptstore:process:next'
     ] 
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, func)

@@ -6,26 +6,26 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 import MainNavigation from './components/MainNavigation.vue'
 
 export default {
   name: 'MainApp',
-  computed: mapGetters([
-    'getPollingStarted',
-    'getIntervalId'
-  ]),
   created: function () {
     document.body.style.backgroundColor = this.bcolor;
-    const pollingStarted = this.getPollingStarted();
+  },
+  mounted() {
+    const pollingStarted = this.$store.state.queue_app_actions.polling_started;
+    console.log(`Has polling already started? ${pollingStarted}`);
     if (!pollingStarted) {
+      console.log(`Call polling vuex action startPolling()`);
       this.startPolling();
     }
   },
   destroyed: function () {
     document.body.style.backgroundColor = null;
-    const pollingStarted = this.getPollingStarted();
-    const intervalId = this.getIntervalId();
+    const pollingStarted = this.$store.state.queue_app_actions.polling_started;
+    const intervalId = this.$store.state.interval_id;
     if (pollingStarted && intervalId) {
       this.stopPolling();
     }

@@ -37,7 +37,7 @@
                                 <img id="usk" class="usk_default" :src="getUskImage(currentApp.required_age_usk)">
                             </div>
                         </div>
-                        <div class="row align-items-end">
+                        <div v-if="platformAvailable" class="row align-items-end">
                             <DetailsActions 
                                 :currentApp="currentApp" 
                                 :selectedPlatform="currentApp.platforms[0]"
@@ -112,6 +112,16 @@
                 axios.get(appurl).then((response) => {
                     this.currentApp = response.data;
                 });
+            }
+        },
+        computed: {
+            platformAvailable: function() {
+                console.log(`COMPUTED platformAvailable`);
+                console.log(this.currentApp);
+                console.log(`type of platforms ${typeof this.currentApp.platforms[0]}`);
+                const available = (typeof this.currentApp.platforms[0] === 'string');
+                console.log(`Return platformAvailable ${available}`);
+                return available;
             }
         },
         mounted() {
