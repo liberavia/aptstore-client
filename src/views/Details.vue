@@ -1,89 +1,91 @@
 <template>
-    <b-container class="fadeIn4">
-        <b-row>
-            <b-col>
-                <b-card-group>
+    <b-overlay :show="detailsLoading">
+        <b-container class="fadeIn4">
+            <b-row>
+                <b-col>
+                    <b-card-group>
+                        <b-card bg-variant="dark" text-variant="white">
+                            <b-card-img 
+                                :src="currentApp.image_details"
+                                width="95%"
+                            >                
+                        </b-card>
+                        <b-card bg-variant="dark" text-variant="white">                
+                            <div class="row align-items-start">
+                                <div class="col align-self-end">
+                                    <h1>{{ currentApp.name }}</h1>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6 align-self-start">
+                                    <span 
+                                        v-for="category in currentApp.categories"
+                                        :key="category"
+                                        class="badge rounded-pill bg-primary"
+                                    >{{ category }}</span>
+                                </div>
+                                <div class="col-sm-4 align-self-end">
+                                    <b-form-rating 
+                                        v-model="avg_rating" 
+                                        variant="warning" 
+                                        no-border
+                                        readonly>
+                                    </b-form-rating>                        
+                                </div>
+                            </div>
+                            <div v-if="currentApp.required_age_usk" class="row">
+                                <div id="age_recommendation" class="col align-self-end">
+                                    <img id="usk" class="usk_default" :src="getUskImage(currentApp.required_age_usk)">
+                                </div>
+                            </div>
+                            <div v-if="detailsLoading === false" class="row align-items-end">
+                                <DetailsActions 
+                                    :currentApp="currentApp" 
+                                    :selectedPlatform="selectedPlatform"
+                                />
+                            </div>
+                        </b-card>
+                    </b-card-group>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col>
                     <b-card bg-variant="dark" text-variant="white">
-                        <b-card-img 
-                            :src="currentApp.image_details"
-                            width="95%"
-                        >                
-                    </b-card>
-                    <b-card bg-variant="dark" text-variant="white">                
-                        <div class="row align-items-start">
-                            <div class="col align-self-end">
-                                <h1>{{ currentApp.name }}</h1>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6 align-self-start">
-                                <span 
-                                    v-for="category in currentApp.categories"
-                                    :key="category"
-                                    class="badge rounded-pill bg-primary"
-                                >{{ category }}</span>
-                            </div>
-                            <div class="col-sm-4 align-self-end">
-                                <b-form-rating 
-                                    v-model="avg_rating" 
-                                    variant="warning" 
-                                    no-border
-                                    readonly>
-                                </b-form-rating>                        
-                            </div>
-                        </div>
-                        <div v-if="currentApp.required_age_usk" class="row">
-                            <div id="age_recommendation" class="col align-self-end">
-                                <img id="usk" class="usk_default" :src="getUskImage(currentApp.required_age_usk)">
-                            </div>
-                        </div>
-                        <div v-if="platformAvailable" class="row align-items-end">
-                            <DetailsActions 
-                                :currentApp="currentApp" 
-                                :selectedPlatform="currentApp.platforms[0]"
-                            />
-                        </div>
-                    </b-card>
-                </b-card-group>
-            </b-col>
-        </b-row>
-        <b-row>
-            <b-col>
-                <b-card bg-variant="dark" text-variant="white">
-                    <b-card-text>{{ currentApp.description_short }}</b-card-text>
-                </b-card>            
-            </b-col>
-        </b-row>
-        <b-row v-if="currentApp.screenshots.length > 0">
-            <b-col>
-                <b-carousel
-                    id="app-screenshots"
-                    v-model="slide"
-                    :interval="4000"
-                    controls
-                    indicators
-                    fade
-                    background="#333333"
-                    label-next=""
-                    label-prev=""
-                    style="text-shadow: 1px 1px 2px #333;"
-                >
-                    <b-carousel-slide 
-                        v-for="screenshot in currentApp.screenshots"
-                        :key="screenshot.id"
-                        :img-src="screenshot.image"
-                    ></b-carousel-slide>
-                </b-carousel>
-            </b-col>
-        </b-row>
-        <b-row>
-            <b-col>
-                <b-card bg-variant="dark" text-variant="white">
-                    <b-card-text>{{ currentApp.description_long }}</b-card-text>
-                </b-card>            
-            </b-col>
-        </b-row>
-    </b-container>
+                        <b-card-text>{{ currentApp.description_short }}</b-card-text>
+                    </b-card>            
+                </b-col>
+            </b-row>
+            <b-row v-if="currentApp.screenshots.length > 0">
+                <b-col>
+                    <b-carousel
+                        id="app-screenshots"
+                        v-model="slide"
+                        :interval="4000"
+                        controls
+                        indicators
+                        fade
+                        background="#333333"
+                        label-next=""
+                        label-prev=""
+                        style="text-shadow: 1px 1px 2px #333;"
+                    >
+                        <b-carousel-slide 
+                            v-for="screenshot in currentApp.screenshots"
+                            :key="screenshot.id"
+                            :img-src="screenshot.image"
+                        ></b-carousel-slide>
+                    </b-carousel>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                    <b-card bg-variant="dark" text-variant="white">
+                        <b-card-text>{{ currentApp.description_long }}</b-card-text>
+                    </b-card>            
+                </b-col>
+            </b-row>
+        </b-container>
+    </b-overlay>
 </template>
 
 <script>
@@ -97,7 +99,9 @@
         },
         data() {
             return {
+                detailsLoading: true,
                 currentApp: {},
+                selectedPlatform: '',
                 avg_rating: 3.5,
                 slide: 0,
             }
@@ -106,11 +110,13 @@
             getUskImage(age) {
                 return `https://usk.de/wp-content/themes/neve-child/images/Assets/Icon/USK/${age}j.png`;
             },
-            async setApp(appId) {
+            async setApp() {
                 const baseurl = process.env.VUE_APP_APTSTORE_BASE_URL;
-                const appurl = `${baseurl}api/app/${appId}`;
+                const appurl = `${baseurl}api/app/${this.$route.params.id}`;
                 axios.get(appurl).then((response) => {
+                    this.selectedPlatform = response.data.platforms[0];
                     this.currentApp = response.data;
+                    this.detailsLoading = false;
                 });
             }
         },
@@ -125,7 +131,7 @@
             }
         },
         mounted() {
-            this.setApp(this.$route.params.id);
+            this.setApp();
             document.title = 'Aptstore';
         },  
     }

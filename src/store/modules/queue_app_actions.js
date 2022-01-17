@@ -77,7 +77,7 @@ const actions = {
         });
     },
     async processNext(context, nextTask) {
-        const loading = state.getIsLoadingNewTask();
+        const loading = state.is_loading_new_task;
         if (!loading) {
             context.commit('setIsLoadingNewTask', true);
             window.ipcRenderer.send('aptstore:process:next', nextTask);

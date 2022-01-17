@@ -134,7 +134,7 @@ export default {
     },
     computed: { 
         isInQueue() {
-            const newQueue = this.$store.state.queue;
+            const newQueue = this.$store.state.queue_app_actions.queue;
             let inQueue = false;
             newQueue.forEach(element => {
                 if (element.ident === this.currentApp.ident) {
@@ -150,7 +150,7 @@ export default {
             return inQueue;
         },
         isInProgress() {
-            const newProgress = this.$store.state.queue;
+            const newProgress = this.$store.state.queue_app_actions.current_progress;
             let inProgress = false;
             newProgress.forEach(element => {
                 if (element.app_ident === this.currentApp.ident) {
