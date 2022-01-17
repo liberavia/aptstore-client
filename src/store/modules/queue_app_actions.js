@@ -48,6 +48,7 @@ const actions = {
     },
     async startNextTaskReceiver(context) {
         window.ipcRenderer.receive('response:aptstore:process:next', (e, success) => {
+            console.log(`Get Response for channel 'response:aptstore:process:next' with ${success}`);            
             if (!success) {
                 return;
             }

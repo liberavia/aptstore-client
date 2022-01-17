@@ -26,7 +26,6 @@
         </div>
         <template #overlay>
             <div v-if="isInQueue" class="text-center">
-                <b-icon icon="stopwatch" font-scale="3" animation="cylon"></b-icon>
                 <p id="cancel-label">In queue for {{ queueAction }}</p>
                 <b-button
                     ref="cancel"

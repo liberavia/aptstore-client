@@ -3,6 +3,8 @@ const url = require("url");
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
+const dotenv = require('dotenv');
+dotenv.config();
 
 const PATH_APTSTORE = '.aptstore';
 const PATH_APTSTORE_REPORTS_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress');
@@ -113,12 +115,41 @@ ipcMain.on('aptstore:progress:current', function(e) {
 });
 
 /**
- * 
+ * Process next task given
  */
 ipcMain.on('aptstore:process:next', function(e, nextTask) {
   console.log(`Calling to progress next task ${JSON.stringify(nextTask)}`);
-  // if everything went well, respond success to receiver
-  e.reply(`response:aptstore:process:next`, true);
+  const executable = process.env.VUE_APP_APTSTORE_CORE_EXECUTABLE;
+  console.log(`Executable is ${executable}`);
+  const task = spawn(executable, [
+    nextTask.platform, 
+    nextTask.action, 
+    `--ident=${nextTask.ident}`,
+    `--login=${nextTask.login}`,
+    `--secret=${nextTask.secret}`
+  ]);
+
+  task.stdout.on("data", data => {
+    console.log(`stdout: ${data}`);
+  });
+
+  task.stderr.on("data", data => {
+      console.log(`stderr: ${data}`);
+  });
+
+  task.on('error', (error) => {
+      console.log(`error: ${error.message}`);
+  });
+
+  task.on("close", code => {
+      console.log(`child process exited with code ${code}`);
+  });      
+
+  // @todo: wait for progress file to popup. Currently just wait 5 seconds before leaving
+  // and hope file has been created in the meantime
+  new Promise(r => setTimeout(r, 5000)).then(() => {
+    e.reply(`response:aptstore:process:next`, true);
+  });
 });
 
 /**
