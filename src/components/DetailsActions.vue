@@ -102,8 +102,8 @@ export default {
                 platform: this.selectedPlatform,
                 ident: this.currentApp.ident,
                 name: this.currentApp.name,
-                login: 'someLogin',
-                secret: 'someSecret'
+                login: 'someUser',
+                secret: 'somePassword'
             };
             this.addToQueue(queueElement);
         },
@@ -113,8 +113,8 @@ export default {
                 platform: this.selectedPlatform,
                 ident: this.currentApp.ident,
                 name: this.currentApp.name,
-                login: 'someLogin',
-                secret: 'someSecret'
+                login: 'someUser',
+                secret: 'somePassword'
             };
             this.addToQueue(queueElement);
         },

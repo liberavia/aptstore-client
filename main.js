@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const PATH_APTSTORE = '.aptstore';
-const PATH_APTSTORE_REPORTS_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress');
+const PATH_APTSTORE_REPORTS_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress', 'steam');
 
 let mainWindow
 
@@ -49,6 +49,7 @@ ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   const userHome = app.getPath('home');  
   const systemPath = path.join(userHome, fileHomePath);
   let response = false;
+  console.log(`Path to check ${systemPath}`);
   try {
     if (fs.existsSync(systemPath)) {
       response = true;
@@ -105,8 +106,9 @@ ipcMain.on('aptstore:progress:current', function(e) {
 
   let current = [];
   files.forEach(function(file){
-    const filePath = path.join(progressReportPaths.steam, file.name);
-    fs.readFileSync(filePath);
+    console.log(`File in progress report path ${file}`);
+    const filePath = path.join(progressReportPaths.steam, file);
+    const fileContent = fs.readFileSync(filePath);
     current.push(fileContent);
   });
 
