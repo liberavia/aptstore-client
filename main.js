@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const PATH_APTSTORE = '.aptstore';
-const PATH_APTSTORE_REPORTS_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress', 'steam');
+const PATH_APTSTORE_REPORT_PROGRESS = path.join(PATH_APTSTORE, 'reports', 'progress');
 
 let mainWindow
 
@@ -45,6 +45,9 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
+/**
+ * Check if a certain file related to home folder exists
+ */
 ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   const userHome = app.getPath('home');  
   const systemPath = path.join(userHome, fileHomePath);
@@ -60,23 +63,27 @@ ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   e.reply('response:file:home:exists', response)
 });
 
-ipcMain.on('apstore:core:proton:install', function(e, params) {
-  // todo: exchange dummy 
-  console.log(`triggered proton install for ident ${params.ident} with login ${params.login} and secret ${params.secret}`);
-  e.reply('response:apstore:core:proton:install', 'started')
-  new Promise(r => setTimeout(r, 5000)).then(() => {
-    e.reply(`response:apstore:core:proton:remove`, 'finished');
-  });
+ipcMain.on('check:app:installed', function(e, appToCheck) {
+  console.log(`Check app installed called: ${JSON.stringify(appToCheck)}`);
+  const fileHomePath = appToCheck.fileHomePath;
+  const appId = appToCheck.appId;
+
+  const userHome = app.getPath('home');  
+  const systemPath = path.join(userHome, fileHomePath);
+  let response = false;
+  console.log(`Path to check ${systemPath}`);
+  try {
+    if (fs.existsSync(systemPath)) {
+      response = true;
+    }
+  } catch(err) {
+    console.log(`Catched error ${JSON.stringify(err)}`);
+  }
+  const returnChannel = `response:check:app:installed:${appId}`;
+  console.log(`Sending respsose to '${returnChannel}': ${JSON.stringify(response)}`);
+  e.reply(returnChannel, response);
 });
 
-ipcMain.on('apstore:core:proton:remove', function(e, params) {
-  // todo: exchange dummy 
-  console.log(`triggered removing proton app with ident ${params.ident} and login ${params.login} and secret ${params.secret}`);
-  e.reply('response:apstore:core:proton:remove', 'started')
-  new Promise(r => setTimeout(r, 5000)).then(() => {
-    e.reply(`response:apstore:core:proton:remove`, 'finished');
-  });
-});
 
 /**
  * Feeding queue for app actions with progress reports
@@ -91,25 +98,31 @@ ipcMain.on('aptstore:progress:current', function(e) {
   const userHome = app.getPath('home');
 
   const progressReportPaths = {
-    steam: path.join(userHome, PATH_APTSTORE_REPORTS_PROGRESS)
+    steam: path.join(userHome, PATH_APTSTORE_REPORT_PROGRESS, 'steam')
   };
   console.log(`paths: ${JSON.stringify(progressReportPaths)}`);
 
-  let files = fs.readdirSync(progressReportPaths.steam).filter(fn => fn.endsWith('.log'));
+  let files = fs.readdirSync(progressReportPaths.steam);
   console.log(`files: ${files}`);
+  console.log(`type: '${typeof files}'`);
+  console.log(`length: '${files.length}'`);
 
-  if (files.length === 0) {
+  if (files.length == 0) {
     console.log(`respond false to response:aptstore:progress:current`);
     e.reply(`response:aptstore:progress:current`, false);
     return;
   }
 
   let current = [];
-  files.forEach(function(file){
+  files.every((file, index, array) => { 
     console.log(`File in progress report path ${file}`);
     const filePath = path.join(progressReportPaths.steam, file);
+    console.log(`Full path to file: ${filePath}`);
     const fileContent = fs.readFileSync(filePath);
-    current.push(fileContent);
+    console.log(`Content: ${fileContent}`);
+    console.log(`type of Content: ${typeof fileContent}`);
+    const lengthOfCurrent = current.push(`${fileContent}`);
+    console.log(`lengthOfCurrent: ${lengthOfCurrent}`);
   });
 
   console.log(`respond to response:aptstore:progress:current: ${current}`);
@@ -152,38 +165,4 @@ ipcMain.on('aptstore:process:next', function(e, nextTask) {
   new Promise(r => setTimeout(r, 5000)).then(() => {
     e.reply(`response:aptstore:process:next`, true);
   });
-});
-
-/**
- * Demo for nonblocking cli usage 
- */
-ipcMain.on('cat:file:home', function(e, fileHomePath) {
-  const userHome = app.getPath('home');  
-  const systemPath = path.join(userHome, fileHomePath);
-  try {
-    if (fs.existsSync(systemPath)) {
-      const cat = spawn('cat', [systemPath]);
-
-      cat.stdout.on("data", data => {
-          console.log(`stdout: ${data}`);
-          e.reply('response:cat:file:home', stdout)
-        });
-      
-      cat.stderr.on("data", data => {
-          console.log(`stderr: ${data}`);
-          e.reply('response:cat:file:home', stderr)
-      });
-      
-      cat.on('error', (error) => {
-          console.log(`error: ${error.message}`);
-          e.reply('response:cat:file:home', error)
-      });
-      
-      cat.on("close", code => {
-          console.log(`child process exited with code ${code}`);
-      });      
-    }
-  } catch(err) {
-    e.reply('response:cat:file:home', err)
-  }  
 });

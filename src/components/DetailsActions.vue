@@ -1,5 +1,5 @@
 <template>
-    <b-overlay :show="appIsProcessing()" variant="dark">
+    <b-overlay :show="(isInProgress || isInQueue || isLoadingNewTask)" variant="dark" opacity="0.8">
         <div class="col align-self-end">
             <div class="row">
                 <div class="col">
@@ -25,25 +25,22 @@
             </div>
         </div>
         <template #overlay>
-            <div v-if="isInQueue" class="text-center">
-                <p id="cancel-label">In queue for {{ queueAction }}</p>
-                <b-button
-                    ref="cancel"
-                    variant="outline-danger"
-                    size="sm"
-                    aria-describedby="cancel-label"
-                    @click="cancelQueue()"
-                >
-                    Cancel
-                </b-button>
-            </div>
-            <div v-if="isInProgress" class="text-center">
-                <p>{{ progressData.status_message }}</p>
-                <b-progress 
-                    :value="progressData.percent_done" 
-                    :max="progressMax" 
-                    animated
-                ></b-progress>
+            <b-card 
+                v-if="isInProgress" 
+                header-tag="header" 
+                footer-tag="footer"
+            >
+                <template #header>
+                    <h6 class="mb-0">{{ progressData.status_message }}</h6>
+                </template>
+                <b-card-text>
+                        <b-progress 
+                            :value="progressData.percent_done" 
+                            :max="progressMax" 
+                            show-progress
+                            animated
+                        ></b-progress>
+                </b-card-text>
                 <b-button
                     ref="cancel"
                     variant="outline-danger"
@@ -53,7 +50,34 @@
                 >
                     Cancel
                 </b-button>
-            </div>
+                <template #footer>
+                    <em>
+                        <b-badge>Speed: {{ progressData.download_rate }}</b-badge>
+                        <b-badge>Downloaded: {{ progressData.download_done }}/{{ progressData.download_size }}</b-badge>
+                    </em>
+                </template>
+            </b-card>            
+            <b-row v-if="isInQueue">
+                <b-col>
+                    <b-badge>In queue for {{ queueAction }}</b-badge>
+                </b-col>
+                <b-col>
+                    <b-button
+                        ref="cancel"
+                        variant="outline-danger"
+                        size="sm"
+                        aria-describedby="cancel-label"
+                        @click="cancelQueue()"
+                    >
+                        Cancel
+                    </b-button>
+                </b-col>
+            </b-row>
+            <b-row v-if="isLoadingNewTask">
+                <b-col>
+                    <b-icon icon="three-dots" font-scale="3" animation="cylon"></b-icon>
+                </b-col>
+            </b-row>
         </template>        
     </b-overlay>
 </template>
@@ -68,24 +92,27 @@ export default {
         return {
             isInstalled: false,
             queueAction: '',
-            progressData: {},
             progressMax: 100,
         }
     },
     mounted() {
         this.$nextTick(function () {
-            this.checkInstalled();
+            this.enableInstalledReceiver();
         });
     },
     methods: {
         ...mapActions(['addToQueue']),
-        checkInstalled() {
-            window.ipcRenderer.receive('response:file:home:exists', (e, fileExists) => {
-                console.log(`response:file:home:exists DATA: ${fileExists}`);
+        enableInstalledReceiver() {
+            window.ipcRenderer.receive(`response:check:app:installed:${this.currentApp.ident}`, (e, fileExists) => {
+                console.log(`response:check:app:installed:${this.currentApp.ident} DATA: ${fileExists}`);
                 if (fileExists) {
                     this.isInstalled = true;
+                } else {
+                    this.isInstalled = false;
                 }
             });
+        },
+        checkInstalled() {
             const pathBaseDir = '/.aptstore/reports/installed/';
             let pathPlatform = `${this.selectedPlatform}/`;
             if (this.selectedPlatform == 'proton') {
@@ -93,8 +120,8 @@ export default {
             }
             const installedDir = pathBaseDir + pathPlatform;
             const filePath = installedDir + `${this.currentApp.ident}.json`;
-
-            window.ipcRenderer.send('check:file:home:exists', filePath);
+            const appToCheck = {fileHomePath: filePath, appId: this.currentApp.ident};
+            window.ipcRenderer.send('check:app:installed', appToCheck);
         },
         installApp() {
             const queueElement = {
@@ -121,9 +148,6 @@ export default {
         launchApp() {
             alert('Launching app not yet implemented');
         },
-        appIsProcessing() {
-            return (this.isInQueue || this.isInProgress);
-        },
         cancelQueue() {
             alert('cancel queue not yet implemented');
         },
@@ -131,7 +155,10 @@ export default {
             alert('cancel progress not yet implemented');
         },
     },
-    computed: { 
+    computed: {
+        isLoadingNewTask() {
+            return this.$store.state.queue_app_actions.is_loading_new_task;
+        },
         isInQueue() {
             const newQueue = this.$store.state.queue_app_actions.queue;
             let inQueue = false;
@@ -151,18 +178,45 @@ export default {
         isInProgress() {
             const newProgress = this.$store.state.queue_app_actions.current_progress;
             let inProgress = false;
-            newProgress.forEach(element => {
-                if (element.app_ident === this.currentApp.ident) {
-                    inProgress = true;
-                    this.progressData = element;
-                }
-            });
-
-            if (!inProgress) {
-                this.checkInstalled();
+            console.log(`Get state from current_progress: ${newProgress}`);
+            console.log(`Type is: ${typeof newProgress}`);
+            
+            if (typeof newProgress == 'object' && newProgress.length > 0) {
+                newProgress.every((currentProgress) => {
+                    const currentProgressString = currentProgress.toString();
+                    console.log(`String of currentProgress: ${currentProgressString}`);
+                    if (currentProgressString == '') {
+                        console.log(`Empty! Skip to next`);
+                        return false;
+                    }
+                    const currentProgressJson = JSON.parse(currentProgressString);
+                    console.log(`Current Progress: ${currentProgressJson}`);
+                    console.log(`Progress ident: ${currentProgressJson.app_ident}`);
+                    console.log(`App ident: ${this.currentApp.ident}`);
+                    if (currentProgressJson.app_ident === this.currentApp.ident) {
+                        console.log(`Its a match!`);
+                        inProgress = true;
+                    }
+                });
             }
 
-            return inProgress;
+            if (inProgress) {
+                console.log(`Return true!`);
+                return true;
+            }
+
+            console.log(`Check installed...`);
+            this.checkInstalled();
+            console.log(`No match! Return false!`);
+            return false;
+        },
+        progressData() {
+            const progressData = this.$store.state.queue_app_actions.current_progress;
+            if (typeof progressData == 'object') {
+                const progressDataJson = JSON.parse(progressData.toString());
+                return progressDataJson;
+            }
+            return {};
         },
     },
 }

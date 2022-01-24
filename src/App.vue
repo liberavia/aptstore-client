@@ -18,8 +18,8 @@ export default {
     const pollingStarted = this.$store.state.queue_app_actions.polling_started;
     console.log(`Has polling already started? ${pollingStarted}`);
     if (!pollingStarted) {
-      console.log(`Call polling vuex action startPolling()`);
-      this.startPolling();
+      console.log(`Call polling vuex action startProgressPolling()`);
+      this.startProgressPolling();
     }
   },
   destroyed: function () {
@@ -27,7 +27,7 @@ export default {
     const pollingStarted = this.$store.state.queue_app_actions.polling_started;
     const intervalId = this.$store.state.interval_id;
     if (pollingStarted && intervalId) {
-      this.stopPolling();
+      this.stopProgressPolling();
     }
   },  
   data() {
@@ -37,8 +37,8 @@ export default {
   },
   methods: {
       ...mapActions([
-        'startPolling',
-        'stopPolling'
+        'startProgressPolling',
+        'stopProgressPolling'
       ]),  
   },
   components: {

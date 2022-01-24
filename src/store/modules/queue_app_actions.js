@@ -17,8 +17,8 @@ const getters = {
 };
 
 const actions = {
-    async startPolling(context) {
-        console.log(`Enter startPolling() polling_started: ${state.polling_started}`);
+    async startProgressPolling(context) {
+        console.log(`Enter startProgressPolling() polling_started: ${state.polling_started}`);
         console.log(`Start TaskReceiver`);
         actions.startNextTaskReceiver(context);
         console.log(`Start ProgressReceiver`);
@@ -32,7 +32,7 @@ const actions = {
         context.commit('setIntervalId', intervalId);
         context.commit('setPollingStarted', true);
     },
-    async stopPolling(context) {
+    async stopProgressPolling(context) {
         console.log(`Stop polling of intervalID: ${state.interval_id}`);
         actions.clearInterval(state.interval_id);
         context.commit('setIntervalId', 0);
@@ -59,17 +59,15 @@ const actions = {
         window.ipcRenderer.receive('response:aptstore:progress:current', (e, response) => {
             console.log(`Get Response for channel 'response:aptstore:progress:current' with ${response} Stringified: ${JSON.stringify(response)}`);
             if (response) {
-                context.commit('setCurrent', response);
+                context.commit('setCurrentProgress', response);
                 context.commit('setIsLoadingNewTask', false);
                 return;
             }
+            context.commit('setCurrentProgress', {});
             console.log(`There is no current progress. Check states: ${JSON.stringify(state)}`);
-            // get current state
-            const current = state.current_progress;
             const loading = state.is_loading_new_task;
     
-            if (current.length === 0 && !loading) {
-                // if no progress of aptstore-core and no loading of new task
+            if (!loading) {
                 const nextTask = actions.getNextTaskFromQueue(context)
                 if (nextTask) {
                     actions.processNext(context, nextTask);

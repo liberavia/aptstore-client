@@ -5,26 +5,15 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     let validChannels = [
         'check:file:home:exists',
         'cat:file:home',
-        'apstore:core:proton:install',
-        'apstore:core:proton:remove',
         'aptstore:progress:current',
-        'aptstore:process:next'
+        'aptstore:process:next',
+        'check:app:installed'
     ] 
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data)
     }
   },
   receive: (channel, func) => {
-    let validChannels = [
-        'response:file:home:exists',
-        'response:cat:file:home',
-        'response:apstore:core:proton:install',
-        'response:apstore:core:proton:remove',
-        'response:aptstore:progress:current',
-        'response:aptstore:process:next'
-    ] 
-    if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, func)
-    }
   }
 })
