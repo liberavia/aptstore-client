@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import MainNavigation from './components/MainNavigation.vue'
 
 export default {
@@ -13,13 +14,32 @@ export default {
   created: function () {
     document.body.style.backgroundColor = this.bcolor;
   },
+  mounted() {
+    const pollingStarted = this.$store.state.queue_app_actions.polling_started;
+    console.log(`Has polling already started? ${pollingStarted}`);
+    if (!pollingStarted) {
+      console.log(`Call polling vuex action startProgressPolling()`);
+      this.startProgressPolling();
+    }
+  },
   destroyed: function () {
     document.body.style.backgroundColor = null;
+    const pollingStarted = this.$store.state.queue_app_actions.polling_started;
+    const intervalId = this.$store.state.interval_id;
+    if (pollingStarted && intervalId) {
+      this.stopProgressPolling();
+    }
   },  
   data() {
     return {
       bcolor: '#333333',
     };
+  },
+  methods: {
+      ...mapActions([
+        'startProgressPolling',
+        'stopProgressPolling'
+      ]),  
   },
   components: {
     MainNavigation,
