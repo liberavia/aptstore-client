@@ -57,6 +57,11 @@
                     </em>
                 </template>
             </b-card>            
+            <b-row v-if="isLoadingNewTask">
+                <b-col>
+                    <b-icon icon="three-dots" font-scale="3" animation="cylon"></b-icon>
+                </b-col>
+            </b-row>
             <b-row v-if="isInQueue">
                 <b-col>
                     <b-badge>In queue for {{ queueAction }}</b-badge>
@@ -71,11 +76,6 @@
                     >
                         Cancel
                     </b-button>
-                </b-col>
-            </b-row>
-            <b-row v-if="isLoadingNewTask">
-                <b-col>
-                    <b-icon icon="three-dots" font-scale="3" animation="cylon"></b-icon>
                 </b-col>
             </b-row>
         </template>        
@@ -104,7 +104,6 @@ export default {
         ...mapActions(['addToQueue']),
         enableInstalledReceiver() {
             window.ipcRenderer.receive(`response:check:app:installed:${this.currentApp.ident}`, (e, fileExists) => {
-                console.log(`response:check:app:installed:${this.currentApp.ident} DATA: ${fileExists}`);
                 if (fileExists) {
                     this.isInstalled = true;
                 } else {
@@ -119,8 +118,7 @@ export default {
                 pathPlatform = 'steam/';
             }
             const installedDir = pathBaseDir + pathPlatform;
-            const filePath = installedDir + `${this.currentApp.ident}.json`;
-            const appToCheck = {fileHomePath: filePath, appId: this.currentApp.ident};
+            const appToCheck = {installedDir: installedDir, appIdent: this.currentApp.ident};
             window.ipcRenderer.send('check:app:installed', appToCheck);
         },
         installApp() {
@@ -178,36 +176,25 @@ export default {
         isInProgress() {
             const newProgress = this.$store.state.queue_app_actions.current_progress;
             let inProgress = false;
-            console.log(`Get state from current_progress: ${newProgress}`);
-            console.log(`Type is: ${typeof newProgress}`);
             
             if (typeof newProgress == 'object' && newProgress.length > 0) {
                 newProgress.every((currentProgress) => {
                     const currentProgressString = currentProgress.toString();
-                    console.log(`String of currentProgress: ${currentProgressString}`);
                     if (currentProgressString == '') {
-                        console.log(`Empty! Skip to next`);
                         return false;
                     }
                     const currentProgressJson = JSON.parse(currentProgressString);
-                    console.log(`Current Progress: ${currentProgressJson}`);
-                    console.log(`Progress ident: ${currentProgressJson.app_ident}`);
-                    console.log(`App ident: ${this.currentApp.ident}`);
                     if (currentProgressJson.app_ident === this.currentApp.ident) {
-                        console.log(`Its a match!`);
                         inProgress = true;
                     }
                 });
             }
 
             if (inProgress) {
-                console.log(`Return true!`);
                 return true;
             }
 
-            console.log(`Check installed...`);
             this.checkInstalled();
-            console.log(`No match! Return false!`);
             return false;
         },
         progressData() {

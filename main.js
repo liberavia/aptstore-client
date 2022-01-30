@@ -47,12 +47,14 @@ app.on('activate', function () {
 
 /**
  * Check if a certain file related to home folder exists
+ * 
+ * @param fileHomePath
+ * @returns boolean
  */
 ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   const userHome = app.getPath('home');  
   const systemPath = path.join(userHome, fileHomePath);
   let response = false;
-  console.log(`Path to check ${systemPath}`);
   try {
     if (fs.existsSync(systemPath)) {
       response = true;
@@ -63,15 +65,21 @@ ipcMain.on('check:file:home:exists', function(e, fileHomePath) {
   e.reply('response:file:home:exists', response)
 });
 
+/**
+ * Check if a certain app is installed. Expects a path and an id of 
+ * app. Returns true or false to app channel
+ * 
+ * @param appToCheck
+ * @returns boolean
+ */
 ipcMain.on('check:app:installed', function(e, appToCheck) {
-  console.log(`Check app installed called: ${JSON.stringify(appToCheck)}`);
-  const fileHomePath = appToCheck.fileHomePath;
-  const appId = appToCheck.appId;
-
+  const installedDir = appToCheck.installedDir;
+  const appIdent = appToCheck.appIdent;
+  const fileHomePath = installedDir + `${appIdent}.json`;
   const userHome = app.getPath('home');  
   const systemPath = path.join(userHome, fileHomePath);
+
   let response = false;
-  console.log(`Path to check ${systemPath}`);
   try {
     if (fs.existsSync(systemPath)) {
       response = true;
@@ -79,8 +87,8 @@ ipcMain.on('check:app:installed', function(e, appToCheck) {
   } catch(err) {
     console.log(`Catched error ${JSON.stringify(err)}`);
   }
-  const returnChannel = `response:check:app:installed:${appId}`;
-  console.log(`Sending respsose to '${returnChannel}': ${JSON.stringify(response)}`);
+
+  const returnChannel = `response:check:app:installed:${appIdent}`;
   e.reply(returnChannel, response);
 });
 
@@ -89,80 +97,131 @@ ipcMain.on('check:app:installed', function(e, appToCheck) {
  * Feeding queue for app actions with progress reports
  * Periodically updating current progress feeded by aptstore-core reporting
  * 
+ * @param void
  * @see src/store/modules/queue_app_actions
  * @see https://github.com/liberavia/aptstore-core/tree/main/aptstore_core/reporting
  * @todo add more platforms and handle merging results from different folders
  */
 ipcMain.on('aptstore:progress:current', function(e) {
-  console.log(`triggered aptstore:progress:current`);
   const userHome = app.getPath('home');
 
   const progressReportPaths = {
     steam: path.join(userHome, PATH_APTSTORE_REPORT_PROGRESS, 'steam')
   };
-  console.log(`paths: ${JSON.stringify(progressReportPaths)}`);
 
   let files = fs.readdirSync(progressReportPaths.steam);
-  console.log(`files: ${files}`);
-  console.log(`type: '${typeof files}'`);
-  console.log(`length: '${files.length}'`);
 
   if (files.length == 0) {
-    console.log(`respond false to response:aptstore:progress:current`);
     e.reply(`response:aptstore:progress:current`, false);
     return;
   }
 
   let current = [];
   files.every((file, index, array) => { 
-    console.log(`File in progress report path ${file}`);
     const filePath = path.join(progressReportPaths.steam, file);
-    console.log(`Full path to file: ${filePath}`);
     const fileContent = fs.readFileSync(filePath);
-    console.log(`Content: ${fileContent}`);
-    console.log(`type of Content: ${typeof fileContent}`);
     const lengthOfCurrent = current.push(`${fileContent}`);
-    console.log(`lengthOfCurrent: ${lengthOfCurrent}`);
   });
 
-  console.log(`respond to response:aptstore:progress:current: ${current}`);
   e.reply(`response:aptstore:progress:current`, current);
 });
 
 /**
- * Process next task given
+ * Process next task given. Expects nextTask object given with platform, action and ident.
+ * Optional login and secret is set
+ * 
+ * @param nextTask
+ * @returns boolean
  */
 ipcMain.on('aptstore:process:next', function(e, nextTask) {
-  console.log(`Calling to progress next task ${JSON.stringify(nextTask)}`);
   const executable = process.env.VUE_APP_APTSTORE_CORE_EXECUTABLE;
-  console.log(`Executable is ${executable}`);
-  const task = spawn(executable, [
+
+  let params = [
     nextTask.platform, 
     nextTask.action, 
     `--ident=${nextTask.ident}`,
-    `--login=${nextTask.login}`,
-    `--secret=${nextTask.secret}`
-  ]);
+    '--gui'
+  ];
+  if (nextTask.login) {
+    params.push(`--login=${nextTask.login}`);
+    params.push(`--secret=${nextTask.secret}`);
+  }
 
-  task.stdout.on("data", data => {
-    console.log(`stdout: ${data}`);
-  });
-
-  task.stderr.on("data", data => {
-      console.log(`stderr: ${data}`);
-  });
+  const task = spawn(executable, params);
 
   task.on('error', (error) => {
       console.log(`error: ${error.message}`);
   });
 
-  task.on("close", code => {
-      console.log(`child process exited with code ${code}`);
-  });      
+  // Wait for progress file to popup (max 30 sec)
+  const userHome = app.getPath('home');
+  const reportsProgressBaseDir = '/.aptstore/reports/progress/';
+  const reportsProgressFile = `${nextTask.ident}.json`;
+  const progressBaseDir = '/.aptstore/progress/';
+  let progressFile = `${nextTask.platform}_${nextTask.ident}.log`;
+  if (nextTask.login) {
+    progressFile = `${nextTask.platform}_${nextTask.ident}_${nextTask.login}.log`;
+  }
+  let fileToCheck = '';
+  if (nextTask.action == 'install') {
+    fileToCheck = path.join(
+      userHome,
+      reportsProgressBaseDir, 
+      nextTask.platform, 
+      reportsProgressFile
+    );
+  } else {
+    fileToCheck = path.join(
+      userHome,
+      progressBaseDir, 
+      progressFile
+    );
+  }
 
-  // @todo: wait for progress file to popup. Currently just wait 5 seconds before leaving
-  // and hope file has been created in the meantime
-  new Promise(r => setTimeout(r, 5000)).then(() => {
-    e.reply(`response:aptstore:process:next`, true);
-  });
+  const startTime = Date.now();
+
+  (function(){
+    let waitingForFile = true;
+    let waitingForRemoval = true;
+    
+    function waitForRemoval() {
+      if (waitingForRemoval === true) {
+        const fileExists = fs.existsSync(fileToCheck);
+        waitingForRemoval = fileExists;
+        setTimeout(waitForRemoval, 1000);
+      } else {
+        // now send releasing signal after removal progress file disappeared
+        e.reply(`response:aptstore:process:next`, true);
+      }
+    }
+
+    function checkProgressFile() {
+      if (waitingForFile === true) {
+        try {
+          const fileExists = fs.existsSync(fileToCheck);
+          waitingForFile = !fileExists;
+
+          if (waitingForFile) {
+            // check if loop is running longer than 30 secs
+            const timePassed = Date.now() - startTime;
+            if (timePassed > 30000) {
+              waitingForFile = false;
+            }
+          }
+        } catch(err) {
+          console.log(`Catched error ${JSON.stringify(err)}`);
+        }        
+        setTimeout(checkProgressFile, 1000);
+      } else {
+        if (nextTask.action == 'remove') {
+          waitForRemoval();
+        } else {
+          e.reply(`response:aptstore:process:next`, true);
+        }
+      }
+    }
+
+    checkProgressFile();
+  })();
 });
+
