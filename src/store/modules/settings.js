@@ -1,6 +1,9 @@
 const state = {
     settings: {
-        general: {},
+        general: {
+            systray_enable: false,
+            systray_closeto: false,
+        },
         platforms: {
             steam: {
                 username: '',

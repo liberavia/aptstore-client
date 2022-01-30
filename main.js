@@ -230,13 +230,14 @@ ipcMain.on('aptstore:process:next', function(e, nextTask) {
     let waitingForRemoval = true;
     
     function waitForRemoval() {
+      e.reply(`response:aptstore:process:next`, true);
       if (waitingForRemoval === true) {
         const fileExists = fs.existsSync(fileToCheck);
         waitingForRemoval = fileExists;
         setTimeout(waitForRemoval, 1000);
       } else {
         // now send releasing signal after removal progress file disappeared
-        e.reply(`response:aptstore:process:next`, true);
+        e.reply(`response:aptstore:process:remove:${nextTask.ident}`, true);
       }
     }
 

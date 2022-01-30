@@ -35,11 +35,26 @@
                 </template>
                 <b-card-text>
                         <b-progress 
+                            v-if="progressData.percent_done > 0"
                             :value="progressData.percent_done" 
                             :max="progressMax" 
                             show-progress
                             animated
+                            height="2rem"
                         ></b-progress>
+                        <b-progress 
+                            v-else
+                            max="100" 
+                            height="2rem"
+                        >
+                            <b-progress-bar value="100">
+                                <b-icon 
+                                    icon="three-dots" 
+                                    font-scale="3" 
+                                    animation="cylon">
+                                </b-icon>
+                            </b-progress-bar>
+                        </b-progress>                        
                 </b-card-text>
                 <b-button
                     ref="cancel"
@@ -51,7 +66,7 @@
                     Cancel
                 </b-button>
                 <template #footer>
-                    <em>
+                    <em v-if="progressData.percent_done > 0">
                         <b-badge>Speed: {{ progressData.download_rate }}</b-badge>
                         <b-badge>Downloaded: {{ progressData.download_done }}/{{ progressData.download_size }}</b-badge>
                     </em>

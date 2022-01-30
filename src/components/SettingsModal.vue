@@ -18,7 +18,28 @@
         <b-card no-body>
           <b-tabs pills card vertical v-model="tabSettingsIndex">
             <b-tab title="General" :title-link-class="linkSettingsTabClass(0)" active>
-              <b-card-text>Content general settings</b-card-text>
+              <b-card-text>
+                <div>
+                  <b-form-group
+                    label="Systray"
+                  >
+                    <b-form-checkbox 
+                      v-model="settings.general.systray_enable" 
+                      switch 
+                      size="lg"
+                    >
+                      Enable Systray
+                    </b-form-checkbox>                
+                    <b-form-checkbox 
+                      v-model="settings.general.systray_closeto" 
+                      switch 
+                      size="lg"
+                    >
+                      Close to Systray
+                    </b-form-checkbox>
+                  </b-form-group>  
+                </div>
+              </b-card-text>
             </b-tab>
             <b-tab title="Platforms" :title-link-class="linkSettingsTabClass(1)">
               <b-card-text>
