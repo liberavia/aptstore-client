@@ -26,53 +26,18 @@
         </b-button>
       </b-navbar-nav>
     </b-navbar>
-    <b-modal 
-      id="settings-modal"
-      size="lg"
-      title="Settings"
-      header-bg-variant="dark"
-      header-text-variant="light"
-      body-bg-variant="dark"
-      body-text-variant="light"
-      footer-bg-variant="dark"
-      footer-text-variant="light"
-    >
-      <template #modal-header>
-        <h5>Settings</h5>
-      </template>
-      <template #default>
-        <b-card no-body>
-          <b-tabs pills card vertical v-model="tabSettingsIndex">
-            <b-tab title="General" :title-link-class="linkSettingsTabClass(0)" active>
-              <b-card-text>Content general settings</b-card-text>
-            </b-tab>
-            <b-tab title="Platforms" :title-link-class="linkSettingsTabClass(1)">
-              <b-card-text>Content platform settings</b-card-text>
-            </b-tab>
-            <b-tab title="Misc" :title-link-class="linkSettingsTabClass(2)">
-              <b-card-text>Content miscellaneous settings</b-card-text>
-            </b-tab>
-          </b-tabs>
-        </b-card>
-      </template>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button size="sm" variant="success" @click="ok()">
-          OK
-        </b-button>
-        <b-button size="sm" @click="cancel()">
-          Cancel
-        </b-button>
-      </template>
-    </b-modal>    
+    <SettingsModal />
   </div>  
 </template>
 
 <script>
   import Vue from 'vue';
+  import SettingsModal from './SettingsModal.vue'
 
   export default Vue.extend({
     name: 'MainNavigation',
     components: {
+      SettingsModal
     },
     props: {
     },

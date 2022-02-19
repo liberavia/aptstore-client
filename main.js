@@ -46,6 +46,51 @@ app.on('activate', function () {
 })
 
 /**
+ * Load settings from disk
+ * 
+ * @param void
+ * @returns json
+ * @todo passwords need to be saved encrypted
+ */
+ ipcMain.on('aptstore:settings:load', function(e) {
+  const settingsFilePath = path.join(
+    app.getPath('home'),
+    '.aptstore',
+    'settings.json'
+  );
+  try {
+    if (fs.existsSync(settingsFilePath)) {
+      const settingsFileContent = fs.readFileSync(settingsFilePath);
+      e.reply('response:aptstore:settings:load', `${settingsFileContent}`)
+    }
+  } catch(err) {
+    console.log(`Catched error ${JSON.stringify(err)}`);
+  }
+});
+
+/**
+ * Save settings on disk
+ * 
+ * @param settings
+ * @returns json
+ * @todo passwords need to be saved encrypted
+ */
+ ipcMain.on('aptstore:settings:save', function(e, settings) {
+  const settingsFilePath = path.join(
+    app.getPath('home'),
+    '.aptstore',
+    'settings.json'
+  );
+  try {
+    fs.writeFileSync(settingsFilePath, JSON.stringify(settings));
+    e.reply('response:aptstore:settings:save', true)
+  } catch(err) {
+    console.log(`Catched error ${JSON.stringify(err)}`);
+    e.reply('response:aptstore:settings:save', false)
+  }
+});
+
+/**
  * Check if a certain file related to home folder exists
  * 
  * @param fileHomePath
@@ -185,13 +230,14 @@ ipcMain.on('aptstore:process:next', function(e, nextTask) {
     let waitingForRemoval = true;
     
     function waitForRemoval() {
+      e.reply(`response:aptstore:process:next`, true);
       if (waitingForRemoval === true) {
         const fileExists = fs.existsSync(fileToCheck);
         waitingForRemoval = fileExists;
         setTimeout(waitForRemoval, 1000);
       } else {
         // now send releasing signal after removal progress file disappeared
-        e.reply(`response:aptstore:process:next`, true);
+        e.reply(`response:aptstore:process:remove:${nextTask.ident}`, true);
       }
     }
 

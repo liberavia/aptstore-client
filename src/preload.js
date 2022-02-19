@@ -7,7 +7,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         'cat:file:home',
         'aptstore:progress:current',
         'aptstore:process:next',
-        'check:app:installed'
+        'check:app:installed',
+        'aptstore:settings:load',
+        'aptstore:settings:save',
     ] 
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data)

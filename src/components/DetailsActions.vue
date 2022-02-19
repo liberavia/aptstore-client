@@ -35,11 +35,26 @@
                 </template>
                 <b-card-text>
                         <b-progress 
+                            v-if="progressData.percent_done > 0"
                             :value="progressData.percent_done" 
                             :max="progressMax" 
                             show-progress
                             animated
+                            height="2rem"
                         ></b-progress>
+                        <b-progress 
+                            v-else
+                            max="100" 
+                            height="2rem"
+                        >
+                            <b-progress-bar value="100">
+                                <b-icon 
+                                    icon="three-dots" 
+                                    font-scale="3" 
+                                    animation="cylon">
+                                </b-icon>
+                            </b-progress-bar>
+                        </b-progress>                        
                 </b-card-text>
                 <b-button
                     ref="cancel"
@@ -51,7 +66,7 @@
                     Cancel
                 </b-button>
                 <template #footer>
-                    <em>
+                    <em v-if="progressData.percent_done > 0">
                         <b-badge>Speed: {{ progressData.download_rate }}</b-badge>
                         <b-badge>Downloaded: {{ progressData.download_done }}/{{ progressData.download_size }}</b-badge>
                     </em>
@@ -122,14 +137,21 @@ export default {
             window.ipcRenderer.send('check:app:installed', appToCheck);
         },
         installApp() {
-            const queueElement = {
+            let queueElement = {
                 action: 'install',
                 platform: this.selectedPlatform,
                 ident: this.currentApp.ident,
                 name: this.currentApp.name,
-                login: 'someUser',
-                secret: 'somePassword'
+                login: '',
+                secret: '',
             };
+            if (
+                this.selectedPlatform == 'steam' ||
+                this.selectedPlatform == 'proton'
+            ) {
+                queueElement.login = this.settings.platforms.steam.username;
+                queueElement.secret = this.settings.platforms.steam.password;
+            }
             this.addToQueue(queueElement);
         },
         removeApp() {
@@ -138,9 +160,16 @@ export default {
                 platform: this.selectedPlatform,
                 ident: this.currentApp.ident,
                 name: this.currentApp.name,
-                login: 'someUser',
-                secret: 'somePassword'
+                login: '',
+                secret: ''
             };
+            if (
+                this.selectedPlatform == 'steam' ||
+                this.selectedPlatform == 'proton'
+            ) {
+                queueElement.login = this.settings.platforms.steam.username;
+                queueElement.secret = this.settings.platforms.steam.password;
+            }
             this.addToQueue(queueElement);
         },
         launchApp() {
@@ -154,6 +183,20 @@ export default {
         },
     },
     computed: {
+        settings: {
+            get() {
+                const storedSettings = this.$store.state.settings_state.settings;
+                let storedSettingsJson = storedSettings;
+                if (typeof storedSettings == 'string') {
+                storedSettingsJson = JSON.parse(storedSettings);
+                }
+
+                return storedSettingsJson;
+            },
+            set(value) {
+                this.saveSettings(value);
+            },
+        },        
         isLoadingNewTask() {
             return this.$store.state.queue_app_actions.is_loading_new_task;
         },
